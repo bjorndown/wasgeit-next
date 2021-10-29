@@ -1,0 +1,10 @@
+{
+  "workspaces": [
+    "frontend",
+    "crawler",
+    "common"
+  ],
+  "license": "MIT",
+  "private": true,
+  "packageManager": "yarn@3.1.0"
+}
