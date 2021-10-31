@@ -1,6 +1,5 @@
 {
-  "name": "common",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "@wasgeit/common",
+  "version": "0.0.1",
   "license": "MIT"
 }
