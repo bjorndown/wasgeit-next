@@ -1,5 +1,10 @@
+import { useRouter } from 'next/router'
+import { getISOWeek } from 'date-fns'
+
 const Index = () => {
-  return <h1>wasgeit</h1>
+  const router = useRouter()
+  router.push(`/week/${getISOWeek(new Date())}`)
+
 }
 
 export default Index

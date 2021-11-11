@@ -2,7 +2,9 @@
   "name": "@wasgeit/crawler",
   "version": "1.0.0",
   "license": "MIT",
+  "packageManager": "yarn@3.1.0",
   "devDependencies": {
+    "@types/lodash": "4.14.176",
     "@types/node": "16.11.6",
     "@types/puppeteer": "5.4.4",
     "@vercel/ncc": "0.31.1",
@@ -11,8 +13,13 @@
     "typescript": "4.4.4"
   },
   "dependencies": {
-    "@wasgeit/common": "0.0.1",
+    "@wasgeit/common": "*",
     "date-fns": "2.25.0",
-    "puppeteer": "10.4.0"
-  }
+    "lodash": "4.17.21",
+    "puppeteer": "11.0.0"
+  },
+  "scripts": {
+    "crawl": "ts-node src/index.ts"
+  },
+  "private": true
 }

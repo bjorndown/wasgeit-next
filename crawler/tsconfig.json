@@ -2,7 +2,7 @@
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable","ESNext"],
     "incremental": true,
-    "target": "es5",
+    "target": "esnext",
     "outDir": ".build",
     "module": "CommonJS",
     "esModuleInterop": true,

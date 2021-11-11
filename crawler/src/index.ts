@@ -1,16 +1,30 @@
 import puppeteer from 'puppeteer'
-import { Event } from '@wasgeit/common/src/types'
+import {
+  Event,
+  EventsByDate,
+} from '@wasgeit/common/src/types'
 import fs from 'fs'
-import path from 'path'
 import crawlers from './crawlers/index'
 import { EvaluateFn } from 'puppeteer'
+import {
+  format,
+  parseISO,
+  isPast,
+  getMonth,
+  setYear,
+  getYear,
+  formatISO,
+} from 'date-fns'
+import _ from 'lodash'
 
 export type Crawler = {
   name: string
   url: string
   crawl: (page: Page) => Promise<Event[]>
-  postProcess: (events: Event[]) => Event[]
+  parseDate: (date: string) => Date
 }
+
+type EventsByWeekAndDate = Record<string, EventsByDate>
 
 export class Page {
   constructor(private page: puppeteer.Page) {}
@@ -27,7 +41,8 @@ export class Element {
   async getAttribute(attributeName: string): Promise<string> {
     return this.element.evaluate(
       (e, attr) => e.attributes.getNamedItem(attr)?.textContent?.trim() ?? '',
-    attributeName)
+      attributeName
+    )
   }
 
   async query(selector: string): Promise<Element | null> {
@@ -56,23 +71,90 @@ export class Element {
   }
 }
 
+const groupByCalendarWeek = (
+  events: Event[],
+  eventsByWeek: EventsByWeekAndDate
+) => {
+  events.map((event) => {
+    const eventStart = parseISO(event.start)
+    const eventDate = formatISO(eventStart, { representation: 'date' })
+    const calendarWeek = format(eventStart, 'yyyy-II')
+    if (!eventsByWeek[calendarWeek]) {
+      eventsByWeek[calendarWeek] = {}
+    }
+    if (!eventsByWeek[calendarWeek][eventDate]) {
+      eventsByWeek[calendarWeek][eventDate] = []
+    }
+    eventsByWeek[calendarWeek][eventDate].push(event)
+  })
+}
+
+const postProcess = (events: Event[], crawler: Crawler): Event[] => {
+  let today = new Date()
+  return events
+    .filter((event) => {
+      let included =
+        !_.isEmpty(event.start) &&
+        !_.isEmpty(event.title) &&
+        !_.isEmpty(event.url)
+      if (!included) {
+        console.debug('excluding', JSON.stringify(event))
+      }
+      return included
+    })
+    .map((event) => {
+      try {
+        const eventDate = crawler.parseDate(event.start)
+
+        if (getMonth(eventDate) < getMonth(today)) {
+          console.debug('moving', event.url, 'to next year')
+          setYear(eventDate, getYear(today) + 1)
+        }
+
+        return {
+          ...event,
+          start: eventDate.toISOString(),
+        }
+      } catch (error) {
+        console.error('error while parsing', JSON.stringify(event))
+        throw error
+      }
+    })
+}
+
 const main = async () => {
-  const browser = await puppeteer.launch()
+  const browser = await puppeteer.launch({ executablePath: '/usr/bin/vivaldi' })
+
+  const eventsByWeek: EventsByWeekAndDate = {}
 
   for await (const crawler of crawlers) {
     try {
+      console.debug('crawling', crawler.name)
       const page = await browser.newPage()
       await page.goto(crawler.url)
       await page.waitForTimeout(5000)
-      const rawEvents = await crawler.crawl(new Page(page))
-      const events = crawler.postProcess(rawEvents)
-      console.log(events)
+      const rawEvents = (await crawler.crawl(new Page(page))).map(
+        (rawEvent) => ({ ...rawEvent, venue: crawler.name })
+      )
+      groupByCalendarWeek(
+        postProcess(rawEvents, crawler).filter(
+          (event) => !isPast(parseISO(event.start))
+        ),
+        eventsByWeek
+      )
     } catch (error) {
       console.error(error)
     }
   }
 
-  browser.close()
+  await browser.close()
+
+  Object.entries(eventsByWeek).map(([calendarWeek, events]) => {
+    fs.writeFileSync(
+      `../frontend/public/${calendarWeek}.json`,
+      JSON.stringify(events)
+    )
+  })
 }
 
-main()
+main().catch((error) => console.error(error))
