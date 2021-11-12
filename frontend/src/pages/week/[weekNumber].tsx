@@ -30,9 +30,11 @@ const Index = ({ events, weekNumber }: Props) => {
       </Head>
       <header>
         <h1>wasgeit</h1>
-        {formatDate(startOfISOWeek(date))}
-        {' - '}
-        {formatDate(endOfISOWeek(date))}
+        <span className="date-range">
+          {formatDate(startOfISOWeek(date))}
+          {' - '}
+          {formatDate(endOfISOWeek(date))}
+        </span>
       </header>
       <main>
         <ol>
@@ -88,12 +90,17 @@ const Index = ({ events, weekNumber }: Props) => {
         h2 {
           margin: 0.6rem 0;
         }
+        
         h2 {
           font-size: 1.5rem;
           text-transform: uppercase;
-          background-color:black;
+          background-color: black;
           color: white;
           padding: 0.2rem 0.3rem;
+        }
+
+        .date-range {
+          font-size: 1.5rem;
         }
 
         header {

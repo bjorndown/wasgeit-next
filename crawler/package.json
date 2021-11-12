@@ -16,7 +16,8 @@
     "@wasgeit/common": "*",
     "date-fns": "2.25.0",
     "lodash": "4.17.21",
-    "puppeteer": "11.0.0"
+    "puppeteer": "11.0.0",
+    "winston": "3.3.3"
   },
   "scripts": {
     "crawl": "ts-node src/index.ts"

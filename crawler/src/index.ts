@@ -1,8 +1,5 @@
 import puppeteer from 'puppeteer'
-import {
-  Event,
-  EventsByDate,
-} from '@wasgeit/common/src/types'
+import { Event, EventsByDate } from '@wasgeit/common/src/types'
 import fs from 'fs'
 import crawlers from './crawlers/index'
 import { EvaluateFn } from 'puppeteer'
@@ -16,6 +13,7 @@ import {
   formatISO,
 } from 'date-fns'
 import _ from 'lodash'
+import { logger } from './logging'
 
 export type Crawler = {
   name: string
@@ -98,7 +96,7 @@ const postProcess = (events: Event[], crawler: Crawler): Event[] => {
         !_.isEmpty(event.title) &&
         !_.isEmpty(event.url)
       if (!included) {
-        console.debug('excluding', JSON.stringify(event))
+        logger.log({ level: 'debug', message: 'excluding', event })
       }
       return included
     })
@@ -107,7 +105,11 @@ const postProcess = (events: Event[], crawler: Crawler): Event[] => {
         const eventDate = crawler.parseDate(event.start)
 
         if (getMonth(eventDate) < getMonth(today)) {
-          console.debug('moving', event.url, 'to next year')
+          logger.log({
+            level: 'debug',
+            message: 'moving to next year',
+            url: event.url,
+          })
           setYear(eventDate, getYear(today) + 1)
         }
 
@@ -116,7 +118,7 @@ const postProcess = (events: Event[], crawler: Crawler): Event[] => {
           start: eventDate.toISOString(),
         }
       } catch (error) {
-        console.error('error while parsing', JSON.stringify(event))
+        logger.log({ level: 'error', message: 'error while parsing', event })
         throw error
       }
     })
@@ -129,21 +131,23 @@ const main = async () => {
 
   for await (const crawler of crawlers) {
     try {
-      console.debug('crawling', crawler.name)
+      logger.log({ level: 'info', message: `crawling ${crawler.name}` })
       const page = await browser.newPage()
       await page.goto(crawler.url)
-      await page.waitForTimeout(5000)
-      const rawEvents = (await crawler.crawl(new Page(page))).map(
-        (rawEvent) => ({ ...rawEvent, venue: crawler.name })
-      )
+      await page.waitForTimeout(2000)
+      let rawEvents = await crawler.crawl(new Page(page))
+      const eventsWithVenue = rawEvents.map((rawEvent) => ({
+        ...rawEvent,
+        venue: crawler.name,
+      }))
       groupByCalendarWeek(
-        postProcess(rawEvents, crawler).filter(
+        postProcess(eventsWithVenue, crawler).filter(
           (event) => !isPast(parseISO(event.start))
         ),
         eventsByWeek
       )
     } catch (error) {
-      console.error(error)
+      logger.error(error)
     }
   }
 
@@ -157,4 +161,4 @@ const main = async () => {
   })
 }
 
-main().catch((error) => console.error(error))
+main().catch((error) => logger.error(error))

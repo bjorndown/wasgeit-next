@@ -1,5 +1,5 @@
-import { format } from 'date-fns'
 import React from 'react'
+import { format } from 'date-fns'
 
 export default () => <h1>redirecting</h1>
 
