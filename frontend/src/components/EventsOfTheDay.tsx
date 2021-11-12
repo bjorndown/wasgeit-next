@@ -27,18 +27,35 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
         ))}
       </ul>
       <style jsx>{`
+        h2 {
+          font-size: 1.5rem;
+          text-transform: uppercase;
+          background-color: var(--invert-bg-color);
+          color: var(--invert-color);
+          padding: var(--padding) var(--large-padding);
+          position: -webkit-sticky; /* Safari */
+          position: sticky;
+          top: 0;
+        }
+
+        h2:first-of-type {
+            margin-top: 0;
+        }
+
         span.venue-name {
           font-size: 1.1rem;
           text-transform: uppercase;
         }
+
         article.events-of-the-day {
-          padding: 0 0.5rem;
         }
 
         article.event {
           display: flex;
           flex-flow: column wrap;
           margin-bottom: 1.2rem;
+          padding: 0 var(--padding);
+          word-break: break-word;
         }
 
         ul {

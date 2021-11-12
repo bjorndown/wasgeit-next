@@ -1,10 +1,5 @@
 import { EventsByDate } from '@wasgeit/common/src/types'
-import {
-  endOfISOWeek,
-  format,
-  setISOWeek,
-  startOfISOWeek,
-} from 'date-fns'
+import { endOfISOWeek, format, setISOWeek, startOfISOWeek } from 'date-fns'
 import * as fs from 'fs'
 import path from 'path'
 import { NextPageContext } from 'next'
@@ -28,12 +23,14 @@ const Index = ({ events, weekNumber }: Props) => {
         <title>wasgeit - KW{weekNumber}</title>
       </Head>
       <header>
-        <h1>wasgeit</h1>
-        <span className="date-range">
-          {formatDate(startOfISOWeek(date))}
-          {' - '}
-          {formatDate(endOfISOWeek(date))}
-        </span>
+        <section className="brand">
+          <h1>wasgeit</h1>
+          <span className="date-range">
+            {formatDate(startOfISOWeek(date))}
+            {' - '}
+            {formatDate(endOfISOWeek(date))}
+          </span>
+        </section>
       </header>
       <main>
         <Agenda events={events} />
@@ -43,31 +40,39 @@ const Index = ({ events, weekNumber }: Props) => {
       </footer>
       <style jsx>{`
         .container {
-          min-height: 100%;
           display: grid;
           grid-template-areas: 'header' 'events' 'scroll';
           grid-template-rows: auto 1fr auto;
         }
 
         .date-range {
-          font-size: 1.5rem;
+          font-size: 1.2rem;
         }
 
         header {
           grid-area: header;
+          height: var(--header-height);
+        }
+
+        .brand {
           display: flex;
           flex-flow: row wrap;
           justify-content: space-around;
-          align-items: baseline;
+          align-items: center;
+          color: var(--color);
         }
 
         main {
           grid-area: events;
           overflow: auto;
+          height: calc(100vh - var(--header-height) - var(--footer-height));
+          margin: 0;
+          padding: 0;
         }
 
         footer {
           grid-area: scroll;
+          height: var(--footer-height);
         }
       `}</style>
     </div>
