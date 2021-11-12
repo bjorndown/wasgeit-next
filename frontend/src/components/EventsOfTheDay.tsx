@@ -28,7 +28,7 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
       </ul>
       <style jsx>{`
         h2 {
-          font-size: 1.5rem;
+          font-size: var(--medium-font-size);
           text-transform: uppercase;
           background-color: var(--invert-bg-color);
           color: var(--invert-color);
@@ -43,7 +43,7 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
         }
 
         span.venue-name {
-          font-size: 1.1rem;
+          font-size: var(--small-font-size);
           text-transform: uppercase;
         }
 
@@ -53,7 +53,7 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
         article.event {
           display: flex;
           flex-flow: column wrap;
-          margin-bottom: 1.2rem;
+          margin-bottom: calc(3 * var(--large-padding));
           padding: 0 var(--padding);
           word-break: break-word;
         }

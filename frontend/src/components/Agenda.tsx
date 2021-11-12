@@ -21,7 +21,7 @@ export const Agenda = ({ events }: Props) => {
           list-style: none;
           padding: 0;
           margin: 0;
-          font-size: 2rem;
+          font-size: var(--large-font-size);
         }
       `}</style>
     </>

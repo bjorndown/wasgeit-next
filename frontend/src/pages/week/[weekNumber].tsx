@@ -46,7 +46,7 @@ const Index = ({ events, weekNumber }: Props) => {
         }
 
         .date-range {
-          font-size: 1.2rem;
+          font-size: var(--small-font-size);
         }
 
         header {

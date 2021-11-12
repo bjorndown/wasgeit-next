@@ -16,7 +16,6 @@ export const Scroller = (props: { weekNumber: number }) => (
     </ul>
     <style jsx>{`
       nav ul {
-        width: 100%;
         display: flex;
         flex-flow: row wrap;
         justify-content: space-around;
@@ -28,7 +27,7 @@ export const Scroller = (props: { weekNumber: number }) => (
       }
 
       a.scroll {
-        padding: 0 0.6rem;
+        padding: 0 var(--large-padding);
       }
     `}</style>
   </nav>

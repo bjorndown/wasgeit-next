@@ -3,7 +3,7 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url(/fira-sans-400.woff2) format('woff2');
+    src: url(../public/fira-sans-400.woff2) format('woff2');
     unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -12,7 +12,7 @@
     font-style: normal;
     font-weight: 800;
     font-display: swap;
-    src: url(/fira-sans-800.woff2) format('woff2');
+    src: url(../public/fira-sans-800.woff2) format('woff2');
     unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -23,8 +23,7 @@
 body {
     padding: 0;
     margin: 0;
-    font-family: 'Fira Sans', 'Helvetica', sans-serif;
-    overflow: hidden;
+    font-family: 'Fira Sans', 'Liberation Sans', 'Helvetica', sans-serif;
     background-color: var(--bg-color);
 }
 
@@ -35,7 +34,7 @@ a {
 
 h1,
 h2 {
-    margin: 0.6rem 0;
+    margin: var(--large-padding) 0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -65,12 +64,16 @@ h2 {
 
 @media (min-height: 600px) {
     :root {
-        --header-height: 6vh;
-        --footer-height: 8vh;
+        --header-height: 5.5vh;
+        --footer-height: 5.5vh;
     }
 }
 
 :root {
     --padding: 0.2rem;
     --large-padding: 0.4rem;
+
+    --large-font-size: 2rem;
+    --medium-font-size: 1.5rem;
+    --small-font-size: 1.1rem;
 }
