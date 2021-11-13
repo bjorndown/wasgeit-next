@@ -1,8 +1,8 @@
 {
   "workspaces": [
-    "frontend",
+    "common",
     "crawler",
-    "common"
+    "frontend"
   ],
   "license": "MIT",
   "private": true,

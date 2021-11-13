@@ -1,21 +1,41 @@
 import { EventsByDate } from '@wasgeit/common/src/types'
-import { endOfISOWeek, format, setISOWeek, startOfISOWeek } from 'date-fns'
-import * as fs from 'fs'
-import path from 'path'
-import { NextPageContext } from 'next'
+import {
+  endOfISOWeek,
+  format,
+  getYear,
+  setISOWeek,
+  startOfISOWeek,
+} from 'date-fns'
 import { de } from 'date-fns/locale'
 import Head from 'next/head'
 import { Scroller } from '../../components/Scroller'
 import { Agenda } from '../../components/Agenda'
+import useSWR from 'swr'
+import { useRouter } from 'next/router'
+import { Spinner } from '../../components/Spinner'
 
-type Props = {
-  events: EventsByDate
-  weekNumber: number
-}
+const Index = () => {
+  const router = useRouter()
+  const weekNumber = parseInt(
+    Array.isArray(router.query.weekNumber)
+      ? router.query.weekNumber[0]
+      : router.query.weekNumber
+  )
+  const { data: events, isValidating } = useSWR<EventsByDate>(
+    weekNumber ? `/api/events/${getYear(new Date())}-${weekNumber}` : undefined,
+    {
+      fallbackData: {},
+    }
+  )
 
-const Index = ({ events, weekNumber }: Props) => {
+  if (isValidating || !weekNumber) {
+    return <Spinner />
+  }
+
   const date = setISOWeek(new Date(), weekNumber)
-  const formatDate = (date: Date) => format(date, 'dd. MMM', { locale: de })
+  const formatDate = (date: Date) => {
+    return format(date, 'dd. MMM', { locale: de })
+  }
 
   return (
     <div className="container">
@@ -23,12 +43,12 @@ const Index = ({ events, weekNumber }: Props) => {
         <title>wasgeit - KW{weekNumber}</title>
       </Head>
       <header>
-          <h1>wasgeit</h1>
-          <span className="date-range">
-            {formatDate(startOfISOWeek(date))}
-            {' - '}
-            {formatDate(endOfISOWeek(date))}
-          </span>
+        <h1>wasgeit</h1>
+        <span className="date-range">
+          {formatDate(startOfISOWeek(date))}
+          {' - '}
+          {formatDate(endOfISOWeek(date))}
+        </span>
       </header>
       <main>
         <Agenda events={events} />
@@ -65,31 +85,13 @@ const Index = ({ events, weekNumber }: Props) => {
         }
 
         footer {
+        box-shadow: 0 -3px 7px #0006;
           grid-area: scroll;
           height: var(--footer-height);
         }
       `}</style>
     </div>
   )
-}
-
-export async function getServerSideProps(context: NextPageContext) {
-  const weekNumber = parseInt(
-    Array.isArray(context.query.weekNumber)
-      ? context.query.weekNumber[0]
-      : context.query.weekNumber
-  )
-
-  const events = JSON.parse(
-    fs
-      .readFileSync(
-        path.join('public', `${new Date().getFullYear()}-${weekNumber}.json`)
-      )
-      .toString()
-  )
-  return {
-    props: { events, weekNumber },
-  }
 }
 
 export default Index

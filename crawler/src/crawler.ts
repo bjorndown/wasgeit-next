@@ -1,6 +1,4 @@
 import {
-  format,
-  formatISO,
   getMonth,
   getYear,
   parse,
@@ -11,7 +9,7 @@ import {
 import _ from 'lodash'
 import { logger } from './logging'
 import { Page } from './browser'
-import { EventsByDate, Event } from '@wasgeit/common/src/types'
+import { Event } from '@wasgeit/common/src/types'
 import { de } from 'date-fns/locale'
 
 export type Crawler = {
@@ -19,26 +17,6 @@ export type Crawler = {
   url: string
   crawl: (page: Page) => Promise<Event[]>
   prepareDate: (date: string) => [string, 'ISO' | string]
-}
-
-export type EventsByWeekAndDate = Record<string, EventsByDate>
-
-export const groupByCalendarWeek = (
-  events: Event[],
-  eventsByWeek: EventsByWeekAndDate
-) => {
-  events.map((event) => {
-    const eventStart = parseISO(event.start)
-    const eventDate = formatISO(eventStart, { representation: 'date' })
-    const calendarWeek = format(eventStart, 'yyyy-II')
-    if (!eventsByWeek[calendarWeek]) {
-      eventsByWeek[calendarWeek] = {}
-    }
-    if (!eventsByWeek[calendarWeek][eventDate]) {
-      eventsByWeek[calendarWeek][eventDate] = []
-    }
-    eventsByWeek[calendarWeek][eventDate].push(event)
-  })
 }
 
 export const postProcess = (events: Event[], crawler: Crawler): Event[] => {

@@ -2,16 +2,13 @@ import fs from 'fs'
 import crawlers from './crawlers/index'
 import { parseISO, isPast } from 'date-fns'
 import { logger } from './logging'
-import {
-  EventsByWeekAndDate,
-  groupByCalendarWeek,
-  postProcess,
-} from './crawler'
+import { postProcess } from './crawler'
 import { openBrowser } from './browser'
+import { Event } from '@wasgeit/common/src/types'
 
 const main = async () => {
   const browser = await openBrowser()
-  const eventsByWeek: EventsByWeekAndDate = {}
+  let allEvents: Event[] = []
 
   for await (const crawler of crawlers) {
     try {
@@ -22,11 +19,11 @@ const main = async () => {
         ...rawEvent,
         venue: crawler.name,
       }))
-      groupByCalendarWeek(
+
+      allEvents = allEvents.concat(
         postProcess(eventsWithVenue, crawler).filter(
           (event) => !isPast(parseISO(event.start))
-        ),
-        eventsByWeek
+        )
       )
     } catch (error) {
       logger.error(error)
@@ -35,17 +32,12 @@ const main = async () => {
 
   await browser.close()
 
-  let num = 0
+  fs.writeFileSync(
+    `../frontend/public/events.json`,
+    JSON.stringify({ events: allEvents })
+  )
 
-  Object.entries(eventsByWeek).map(([calendarWeek, events]) => {
-    fs.writeFileSync(
-      `../frontend/public/${calendarWeek}.json`,
-      JSON.stringify(events)
-    )
-    num += Object.values(events).flat(1).length
-  })
-
-  console.log('collected', num, 'events')
+  logger.log({ level: 'info', message: `collected ${allEvents.length} events` })
 }
 
 main().catch((error) => logger.error(error))
