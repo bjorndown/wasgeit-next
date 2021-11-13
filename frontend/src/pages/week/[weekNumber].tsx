@@ -36,6 +36,7 @@ const Index = ({ events, weekNumber }: Props) => {
       <footer>
         <Scroller weekNumber={weekNumber} />
       </footer>
+      {/* language=css*/}
       <style jsx>{`
         .container {
           display: grid;

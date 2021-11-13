@@ -16,6 +16,7 @@ export const Agenda = ({ events }: Props) => {
             <EventsOfTheDay key={date} date={date} events={events} />
           ))}
       </ol>
+      {/* language=css*/}
       <style jsx>{`
         ol {
           list-style: none;

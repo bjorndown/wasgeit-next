@@ -26,6 +26,7 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
           </li>
         ))}
       </ul>
+      {/* language=css*/}
       <style jsx>{`
         h2 {
           font-size: var(--medium-font-size);
