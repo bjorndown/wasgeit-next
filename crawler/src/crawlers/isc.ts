@@ -1,4 +1,3 @@
-import { set, startOfDay } from 'date-fns'
 import { Page } from '../browser'
 import { Crawler } from '../crawler'
 
@@ -17,17 +16,13 @@ const crawl = async (page: Page) => {
   )
 }
 
-const parseDate = (date: string): Date => {
-  const [day, month] = date.split('.')
-  return set(startOfDay(new Date()), {
-    date: parseInt(day),
-    month: parseInt(month),
-  })
+const prepareDate = (date: string) => {
+  return [date, 'dd.MM.']
 }
 
 export default {
   name: 'ISC',
   url: 'https://www.isc-club.ch',
   crawl,
-  parseDate,
+  prepareDate,
 } as Crawler

@@ -1,9 +1,7 @@
-import { parse, startOfDay } from 'date-fns'
 import { Page } from '../browser'
 import { Crawler } from '../crawler'
-import { de } from 'date-fns/locale'
 
-const urlBase = 'https://www.dynamo.ch'
+const BASE_URL = 'https://www.dynamo.ch'
 
 const crawl = async (page: Page) => {
   const elements = await page.query('.group-infos')
@@ -16,21 +14,21 @@ const crawl = async (page: Page) => {
         element
           .query('.field.field-name-title a')
           .then((element) => element?.getAttribute('href'))
-          .then((path) => `${urlBase}${path}`),
+          .then((path) => `${BASE_URL}${path}`),
       ])
       return { start, title, url }
     })
   )
 }
 
-const parseDate = (date: string): Date => {
+const prepareDate = (date: string) => {
   const cleaned = date.split(',')[1].trim().split(' -')[0]
-  return parse(cleaned, 'dd. MMMM yyyy', startOfDay(new Date()), { locale: de })
+  return [cleaned, 'dd. MMMM yyyy']
 }
 
 export default {
   name: 'Dynamo',
-  url: `${urlBase}/veranstaltungen`,
+  url: `${BASE_URL}/veranstaltungen`,
   crawl,
-  parseDate,
+  prepareDate,
 } as Crawler

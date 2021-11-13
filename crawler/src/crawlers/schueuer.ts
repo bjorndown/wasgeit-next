@@ -1,4 +1,3 @@
-import { parseISO } from 'date-fns'
 import { Page } from '../browser'
 import { Crawler } from '../crawler'
 
@@ -21,13 +20,13 @@ const crawl = async (page: Page) => {
   )
 }
 
-const parseDate = (date: string): Date => {
-  return parseISO(date)
+const prepareDate = (date: string) => {
+  return [date, 'ISO']
 }
 
 export default {
   name: 'Schüür',
   url: 'https://www.schuur.ch/programm',
   crawl,
-  parseDate,
+  prepareDate,
 } as Crawler

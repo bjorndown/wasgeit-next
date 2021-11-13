@@ -1,5 +1,3 @@
-import { parse, startOfDay } from 'date-fns'
-import { de } from 'date-fns/locale'
 import { Page } from '../browser'
 import { Crawler } from '../crawler'
 
@@ -18,14 +16,14 @@ const crawl = async (page: Page) => {
   )
 }
 
-const parseDate = (date: string): Date => {
+const prepareDate = (date: string) => {
   const cleaned = date.slice(4, 11)
-  return parse(cleaned, 'dd. MMM', startOfDay(new Date()), { locale: de })
+  return [cleaned, 'dd. MMM']
 }
 
 export default {
   name: 'Mokka',
   url: 'https://mokka.ch',
   crawl,
-  parseDate,
+  prepareDate,
 } as Crawler

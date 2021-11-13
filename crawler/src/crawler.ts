@@ -1,14 +1,24 @@
-import { format, formatISO, getMonth, getYear, parseISO, setYear } from 'date-fns'
+import {
+  format,
+  formatISO,
+  getMonth,
+  getYear,
+  parse,
+  parseISO,
+  setYear,
+  startOfDay,
+} from 'date-fns'
 import _ from 'lodash'
 import { logger } from './logging'
 import { Page } from './browser'
 import { EventsByDate, Event } from '@wasgeit/common/src/types'
+import { de } from 'date-fns/locale'
 
 export type Crawler = {
   name: string
   url: string
   crawl: (page: Page) => Promise<Event[]>
-  parseDate: (date: string) => Date
+  prepareDate: (date: string) => [string, 'ISO' | string]
 }
 
 export type EventsByWeekAndDate = Record<string, EventsByDate>
@@ -44,26 +54,34 @@ export const postProcess = (events: Event[], crawler: Crawler): Event[] => {
       }
       return included
     })
-    .map((event) => {
-      try {
-        const eventDate = crawler.parseDate(event.start)
+    .map((event) => processDate(event, crawler, today))
+}
 
-        if (getMonth(eventDate) < getMonth(today)) {
-          logger.log({
-            level: 'debug',
-            message: 'moving to next year',
-            url: event.url,
+const processDate = (event: Event, crawler: Crawler, today: Date) => {
+  try {
+    const [eventDateString, formatString] = crawler.prepareDate(event.start)
+    const eventDate =
+      formatString === 'ISO'
+        ? parseISO(eventDateString)
+        : parse(eventDateString, formatString, startOfDay(new Date()), {
+            locale: de,
           })
-          setYear(eventDate, getYear(today) + 1)
-        }
 
-        return {
-          ...event,
-          start: eventDate.toISOString(),
-        }
-      } catch (error) {
-        logger.log({ level: 'error', message: 'error while parsing', event })
-        throw error
-      }
-    })
+    if (getMonth(eventDate) < getMonth(today)) {
+      logger.log({
+        level: 'debug',
+        message: 'moving to next year',
+        url: event.url,
+      })
+      setYear(eventDate, getYear(today) + 1)
+    }
+
+    return {
+      ...event,
+      start: eventDate.toISOString(),
+    }
+  } catch (error) {
+    logger.log({ level: 'error', message: 'error while parsing', event, error })
+    throw error
+  }
 }

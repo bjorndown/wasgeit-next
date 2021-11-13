@@ -1,4 +1,3 @@
-import {parse} from 'date-fns'
 import { Page } from '../browser'
 import { Crawler } from '../crawler'
 
@@ -17,15 +16,15 @@ const crawl = async (page: Page) => {
   )
 }
 
-const parseDate = (date: string): Date => {
+const prepareDate = (date: string) => {
   const cleaned = date.slice(5).replace('- Doors: ','')
-  return parse(cleaned, 'd.M yyyy HH:mm', new Date())
+  return [cleaned, 'd.M yyyy HH:mm']
 }
 
 export default {
   name: 'Dachstock',
   url: 'https://www.dachstock.ch/unser-programm/',
   crawl,
-  parseDate,
+  prepareDate,
 } as Crawler
 
