@@ -38,6 +38,7 @@ a {
         --color: white;
         --invert-color: black;
         --invert-bg-color: white;
+        --shadow-color: #FFF6;
     }
 }
 
@@ -47,20 +48,28 @@ a {
         --color: black;
         --invert-color: white;
         --invert-bg-color: black;
+        --shadow-color: #0006;
     }
 }
 
-@media (max-height: 600px) {
+@media (max-height: 650px) {
     :root {
-        --header-height: 8vh;
+        --header-height: 8.2vh;
         --footer-height: 8vh;
     }
 }
 
-@media (min-height: 600px) {
+@media (max-height: 850px) {
     :root {
-        --header-height: 5vh;
-        --footer-height: 5vh;
+        --header-height: 6vh;
+        --footer-height: 6vh;
+    }
+}
+
+@media (min-height: 850px) {
+    :root {
+        --header-height: 4vh;
+        --footer-height: 4vh;
     }
 }
 

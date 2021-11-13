@@ -73,7 +73,7 @@ const Index = () => {
         }
 
         footer {
-          box-shadow: 0 -3px 7px #0006;
+          box-shadow: 0 -3px 7px var(--shadow-color);
           grid-area: scroll;
           height: var(--footer-height);
         }
