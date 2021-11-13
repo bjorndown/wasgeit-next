@@ -1,5 +1,6 @@
 import { parse, startOfDay } from 'date-fns'
-import { Crawler, Page } from '..'
+import { Page } from '../browser'
+import { Crawler } from '../crawler'
 import { de } from 'date-fns/locale'
 
 const urlBase = 'https://www.dynamo.ch'

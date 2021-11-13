@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { Crawler } from '..'
+import { Crawler } from '../crawler'
 
 const crawlers: Promise<Crawler>[] = fs
   .readdirSync('./src/crawlers')

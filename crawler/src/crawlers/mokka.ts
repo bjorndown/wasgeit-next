@@ -1,6 +1,7 @@
 import { parse, startOfDay } from 'date-fns'
-import { Crawler, Page } from '..'
 import { de } from 'date-fns/locale'
+import { Page } from '../browser'
+import { Crawler } from '../crawler'
 
 const crawl = async (page: Page) => {
   const elements = await page.query('a.shows')

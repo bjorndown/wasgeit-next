@@ -1,5 +1,6 @@
-import { Crawler, Page } from '..'
 import { set, startOfDay } from 'date-fns'
+import { Page } from '../browser'
+import { Crawler } from '../crawler'
 
 const crawl = async (page: Page) => {
   const elements = await page.query('.event_preview')

@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable","ESNext"],
     "incremental": true,
     "target": "esnext",
     "outDir": ".build",
@@ -9,6 +8,5 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "moduleResolution": "node"
-  },
-  "references": [{ "path": "../common" }]
+  }
 }

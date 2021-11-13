@@ -1,6 +1,7 @@
 import { parse, startOfDay } from 'date-fns'
-import { Crawler, Page } from '..'
 import { de } from 'date-fns/locale'
+import { Page } from '../browser'
+import { Crawler } from '../crawler'
 
 const baseUrl = 'https://www.kiff.ch'
 

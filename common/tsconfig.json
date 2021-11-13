@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
     "incremental": true,
-    "target": "esnext",                                    
+    "target": "esnext",
     "composite": true,
-    "module": "CommonJS",                                
+    "module": "CommonJS",
     "outDir": ".build",
-    "esModuleInterop": true,                        
-    "forceConsistentCasingInFileNames": true,       
-    "strict": true,         
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
     "moduleResolution": "node"
-                        
   }
 }
