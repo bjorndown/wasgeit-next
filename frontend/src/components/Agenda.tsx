@@ -19,8 +19,6 @@ export const Agenda = ({ events }: Props) => {
       <style jsx>{`
         ol {
           list-style: none;
-          padding: 0;
-          margin: 0;
           font-size: var(--large-font-size);
         }
       `}</style>

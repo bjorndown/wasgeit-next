@@ -23,14 +23,12 @@ const Index = ({ events, weekNumber }: Props) => {
         <title>wasgeit - KW{weekNumber}</title>
       </Head>
       <header>
-        <section className="brand">
           <h1>wasgeit</h1>
           <span className="date-range">
             {formatDate(startOfISOWeek(date))}
             {' - '}
             {formatDate(endOfISOWeek(date))}
           </span>
-        </section>
       </header>
       <main>
         <Agenda events={events} />
@@ -52,9 +50,6 @@ const Index = ({ events, weekNumber }: Props) => {
         header {
           grid-area: header;
           height: var(--header-height);
-        }
-
-        .brand {
           display: flex;
           flex-flow: row wrap;
           justify-content: space-around;
@@ -66,8 +61,6 @@ const Index = ({ events, weekNumber }: Props) => {
           grid-area: events;
           overflow: auto;
           height: calc(100vh - var(--header-height) - var(--footer-height));
-          margin: 0;
-          padding: 0;
         }
 
         footer {

@@ -38,10 +38,6 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
           top: 0;
         }
 
-        h2:first-of-type {
-            margin-top: 0;
-        }
-
         span.venue-name {
           font-size: var(--small-font-size);
           text-transform: uppercase;
@@ -53,15 +49,17 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
         article.event {
           display: flex;
           flex-flow: column wrap;
-          margin-bottom: calc(3 * var(--large-padding));
-          padding: 0 var(--padding);
+          margin-bottom: var(--xl-padding);
+          padding: 0 var(--large-padding);
           word-break: break-word;
+        }
+
+        article.event:first-of-type {
+          margin-top: var(--xl-padding);
         }
 
         ul {
           list-style: none;
-          padding: 0;
-          margin: 0;
         }
       `}</style>
     </article>

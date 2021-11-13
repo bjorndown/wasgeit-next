@@ -22,8 +22,7 @@ export const Scroller = (props: { weekNumber: number }) => (
         align-items: center;
         list-style: none;
         padding: 0;
-        font-size: 3rem;
-        margin: -8px 0 0;
+        font-size: var(--large-font-size);
       }
 
       a.scroll {
