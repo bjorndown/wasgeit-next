@@ -1,11 +1,7 @@
 import { Event, EventsByDate } from '@wasgeit/common/src/types'
-import fs from 'fs'
 import { format, formatISO, parseISO } from 'date-fns'
-import { NextApiHandler } from 'next'
-
-const { events: allEvents }: { events: Event[] } = JSON.parse(
-  fs.readFileSync('./public/events.json').toString()
-)
+import { useEffect, useState } from 'react'
+import { useEvents } from './useEvents'
 
 type EventsByWeekAndDate = Record<string, EventsByDate>
 
@@ -26,16 +22,15 @@ const groupByCalendarWeek = (events: Event[]): EventsByWeekAndDate => {
   return eventsByWeek
 }
 
-const eventsPerWeek = groupByCalendarWeek(allEvents)
+export const useEventsByWeek = (weekYear: string | undefined) => {
+  const { events, isValidating } = useEvents()
+  const [eventsByWeek, setEventsByWeek] = useState<EventsByWeekAndDate>({})
 
-const handler: NextApiHandler = async (req, res) => {
-  let weekNumber = Array.isArray(req.query.weekNumber)
-    ? req.query.weekNumber[0]
-    : req.query.weekNumber
-  if (eventsPerWeek[weekNumber]) {
-    return res.json(eventsPerWeek[weekNumber])
-  }
-  return res.status(404).end()
+  useEffect(() => {
+    if (events) {
+      setEventsByWeek(groupByCalendarWeek(events))
+    }
+  }, [events])
+
+  return { events: eventsByWeek[weekYear] ?? {}, isValidating }
 }
-
-export default handler

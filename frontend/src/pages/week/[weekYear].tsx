@@ -1,36 +1,24 @@
-import { EventsByDate } from '@wasgeit/common/src/types'
-import {
-  endOfISOWeek,
-  format,
-  getYear,
-  setISOWeek,
-  startOfISOWeek,
-} from 'date-fns'
+import { endOfISOWeek, format, setISOWeek, startOfISOWeek } from 'date-fns'
 import { de } from 'date-fns/locale'
 import Head from 'next/head'
 import { Scroller } from '../../components/Scroller'
 import { Agenda } from '../../components/Agenda'
-import useSWR from 'swr'
 import { useRouter } from 'next/router'
 import { Spinner } from '../../components/Spinner'
+import { useEventsByWeek } from '../../hooks/useEventsByWeek'
 
 const Index = () => {
   const router = useRouter()
-  const weekNumber = parseInt(
-    Array.isArray(router.query.weekNumber)
-      ? router.query.weekNumber[0]
-      : router.query.weekNumber
-  )
-  const { data: events, isValidating } = useSWR<EventsByDate>(
-    weekNumber ? `/api/events/${getYear(new Date())}-${weekNumber}` : undefined,
-    {
-      fallbackData: {},
-    }
-  )
+  const weekYear = Array.isArray(router.query.weekYear)
+    ? router.query.weekYear[0]
+    : router.query.weekYear
+  const { events, isValidating } = useEventsByWeek(weekYear)
 
-  if (isValidating || !weekNumber) {
+  if (isValidating || !weekYear) {
     return <Spinner />
   }
+
+  const [year, weekNumber] = weekYear.split('-').map((str) => parseInt(str))
 
   const date = setISOWeek(new Date(), weekNumber)
   const formatDate = (date: Date) => {
@@ -40,7 +28,7 @@ const Index = () => {
   return (
     <div className="container">
       <Head>
-        <title>wasgeit - KW{weekNumber}</title>
+        <title>wasgeit - KW{weekYear}</title>
       </Head>
       <header>
         <h1>wasgeit</h1>
@@ -54,7 +42,7 @@ const Index = () => {
         <Agenda events={events} />
       </main>
       <footer>
-        <Scroller weekNumber={weekNumber} />
+        <Scroller weekNumber={weekNumber} year={year} />
       </footer>
       {/* language=css*/}
       <style jsx>{`
@@ -85,7 +73,7 @@ const Index = () => {
         }
 
         footer {
-        box-shadow: 0 -3px 7px #0006;
+          box-shadow: 0 -3px 7px #0006;
           grid-area: scroll;
           height: var(--footer-height);
         }

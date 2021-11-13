@@ -1,29 +1,33 @@
 import React from 'react'
 import { getISOWeek } from 'date-fns'
 
-type Props = { weekNumber: number }
+type Props = {
+  weekNumber: number
+  year: number
+}
 
-export const Scroller = ({ weekNumber }: Props) => {
+export const Scroller = ({ weekNumber, year }: Props) => {
   const currentWeekNumber = getISOWeek(new Date())
+
   return (
     <nav>
       <ul>
         {weekNumber > currentWeekNumber && (
           <li>
-            <a className="scroll" href={`/week/${weekNumber - 1}`}>
+            <a className="scroll" href={`/week/${year}-${weekNumber - 1}`}>
               ◂
             </a>
           </li>
         )}
         {weekNumber !== currentWeekNumber && (
           <li>
-            <a className="scroll" href={`/week/${currentWeekNumber}`}>
+            <a className="scroll" href={`/week/${year}-${currentWeekNumber}`}>
               ⦁
             </a>
           </li>
         )}
         <li>
-          <a className="scroll" href={`/week/${weekNumber + 1}`}>
+          <a className="scroll" href={`/week/${year}-${weekNumber + 1}`}>
             ▸
           </a>
         </li>
