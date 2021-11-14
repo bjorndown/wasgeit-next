@@ -52,14 +52,21 @@ a {
     }
 }
 
-@media (max-height: 650px) {
+@media (min-height: 200px) and (max-height: 500px) {
     :root {
-        --header-height: 8.2vh;
-        --footer-height: 8vh;
+        --header-height: 9vh;
+        --footer-height: 9vh;
     }
 }
 
-@media (max-height: 850px) {
+@media (min-height: 500px) and (max-height: 600px) {
+    :root {
+        --header-height: 7vh;
+        --footer-height: 7.6vh;
+    }
+}
+
+@media (min-height: 600px) and (max-height: 850px) {
     :root {
         --header-height: 6vh;
         --footer-height: 6vh;
@@ -68,8 +75,8 @@ a {
 
 @media (min-height: 850px) {
     :root {
-        --header-height: 4vh;
-        --footer-height: 4vh;
+        --header-height: 3.5vh;
+        --footer-height: 3.5vh;
     }
 }
 

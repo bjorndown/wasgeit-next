@@ -1,5 +1,3 @@
-import { endOfISOWeek, format, setISOWeek, startOfISOWeek } from 'date-fns'
-import { de } from 'date-fns/locale'
 import Head from 'next/head'
 import { Scroller } from '../../components/Scroller'
 import { Agenda } from '../../components/Agenda'
@@ -20,23 +18,13 @@ const Index = () => {
 
   const [year, weekNumber] = weekYear.split('-').map((str) => parseInt(str))
 
-  const date = setISOWeek(new Date(), weekNumber)
-  const formatDate = (date: Date) => {
-    return format(date, 'dd. MMM', { locale: de })
-  }
-
   return (
     <div className="container">
       <Head>
-        <title>wasgeit - KW{weekYear}</title>
+        <title>wasgeit</title>
       </Head>
       <header>
         <h1>wasgeit</h1>
-        <span className="date-range">
-          {formatDate(startOfISOWeek(date))}
-          {' - '}
-          {formatDate(endOfISOWeek(date))}
-        </span>
       </header>
       <main>
         <Agenda events={events} />
@@ -50,10 +38,6 @@ const Index = () => {
           display: grid;
           grid-template-areas: 'header' 'events' 'scroll';
           grid-template-rows: auto 1fr auto;
-        }
-
-        .date-range {
-          font-size: var(--small-font-size);
         }
 
         header {
