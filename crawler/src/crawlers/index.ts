@@ -4,7 +4,7 @@ import { Crawler } from '../crawler'
 
 const crawlers: Promise<Crawler>[] = fs
   .readdirSync(__dirname)
-  .filter((filename) => filename !== 'index.ts' && filename.endsWith('.ts'))
+  .filter((filename) => !filename.includes('index') && !filename.endsWith('.map'))
   .map((moduleName) =>
     import(path.join(__dirname, moduleName)).then((module) => module.default)
   )
