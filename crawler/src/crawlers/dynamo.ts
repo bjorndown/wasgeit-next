@@ -3,32 +3,28 @@ import { Crawler } from '../crawler'
 
 const BASE_URL = 'https://www.dynamo.ch'
 
-const crawl = async (page: Page) => {
-  const elements = await page.query('.group-infos')
-
-  return await Promise.all(
-    elements.map(async (element) => {
-      const [start, title, url] = await Promise.all([
-        element.childText('.field.field-name-field-event-zeitraum'),
-        element.childText('.field.field-name-title'),
-        element
-          .query('.field.field-name-title a')
-          .then((element) => element?.getAttribute('href'))
-          .then((path) => `${BASE_URL}${path}`),
-      ])
-      return { start, title, url }
-    })
-  )
-}
-
-const prepareDate = (date: string) => {
-  const cleaned = date.split(',')[1].trim().split(' -')[0]
-  return [cleaned, 'dd. MMMM yyyy']
-}
-
-export default {
+export const crawler: Crawler = {
   name: 'Dynamo',
   url: `${BASE_URL}/veranstaltungen`,
-  crawl,
-  prepareDate,
-} as Crawler
+  crawl: async (page: Page) => {
+    const elements = await page.query('.group-infos')
+
+    return await Promise.all(
+      elements.map(async (element) => {
+        const [start, title, url] = await Promise.all([
+          element.childText('.field.field-name-field-event-zeitraum'),
+          element.childText('.field.field-name-title'),
+          element
+            .query('.field.field-name-title a')
+            .then((element) => element?.getAttribute('href'))
+            .then((path) => `${BASE_URL}${path}`),
+        ])
+        return { start, title, url }
+      })
+    )
+  },
+  prepareDate: (date: string) => {
+    const cleaned = date.split(',')[1].trim().split(' -')[0]
+    return [cleaned, 'dd. MMMM yyyy']
+  },
+}

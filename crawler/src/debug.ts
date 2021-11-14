@@ -5,16 +5,20 @@ import crawlers from './crawlers'
 
 const getCrawlers = (): Promise<Crawler>[] => {
   if (!process.argv[2]) {
-    return crawlers
+    return crawlers.map((crawler) => Promise.resolve(crawler))
   }
 
   const modulePath = path.join(__dirname, 'crawlers', process.argv[2])
-  return [import(modulePath).then((module) => module.default)]
+  return [
+    import(modulePath).then((module: { crawler: Crawler }) => module.crawler),
+  ]
 }
 
 const main = async () => {
   try {
-    const finalEvents = await runCrawlers(getCrawlers())
+    const crawlers = await Promise.all(getCrawlers())
+    console.dir(crawlers)
+    const finalEvents = await runCrawlers(crawlers)
     console.log(finalEvents)
   } catch (error) {
     logger.error(error)

@@ -13,47 +13,57 @@ import { openBrowser, Page } from './browser'
 import { Event } from '@wasgeit/common/src/types'
 import { de } from 'date-fns/locale'
 
+export type RawEvent = {
+  url?: string
+  title?: string
+  start?: string
+}
+
 export type Crawler = {
   name: string
   url: string
-  crawl: (page: Page) => Promise<Event[]>
+  crawl: (page: Page) => Promise<RawEvent[]>
   prepareDate: (date: string) => [string, 'ISO' | string]
 }
 
-export const runCrawlers = async (
-  crawlers: Promise<Crawler>[]
-): Promise<Event[]> => {
+export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
   const browser = await openBrowser()
-  let events: Event[] = []
 
-  for await (const crawler of crawlers) {
-    try {
-      logger.log({ level: 'info', message: `crawling ${crawler.name}` })
-      const page = await browser.openPage(crawler.url)
-      const rawEvents = await crawler.crawl(page)
-      const eventsWithVenue = rawEvents.map((rawEvent) => ({
-        ...rawEvent,
-        venue: crawler.name,
-      }))
+  const eventsPerCrawler: Record<string, Event[]> = {}
+  await Promise.all(
+    crawlers.map(async (crawler) => {
+      try {
+        logger.log({ level: 'info', message: `crawling ${crawler.name}` })
+        const page = await browser.openPage(crawler.url)
+        const rawEvents = await crawler.crawl(page)
+        const eventsWithVenue = rawEvents.map((rawEvent) => ({
+          ...rawEvent,
+          venue: crawler.name,
+        }))
 
-      events = events.concat(
-        postProcess(eventsWithVenue, crawler).filter(
-          (event) => !isPast(parseISO(event.start))
-        )
-      )
-    } catch (error) {
-      logger.error({ level: 'error', message: 'error during crawling', error })
-    }
-  }
+        eventsPerCrawler[crawler.name] = postProcess(
+          eventsWithVenue,
+          crawler
+        ).filter((event) => !isPast(parseISO(event.start)))
+      } catch (error) {
+        logger.error({
+          level: 'error',
+          message: 'error during crawling',
+          error,
+        })
+      }
+    })
+  )
 
   await browser.close()
+  const events = Object.values(eventsPerCrawler).flat(1)
 
   logger.log({ level: 'info', message: `collected ${events.length} events` })
 
   return events
 }
 
-const postProcess = (events: Event[], crawler: Crawler): Event[] => {
+const postProcess = (events: RawEvent[], crawler: Crawler): Event[] => {
   let today = new Date()
   return events
     .filter((event) => {
@@ -66,10 +76,10 @@ const postProcess = (events: Event[], crawler: Crawler): Event[] => {
       }
       return included
     })
-    .map((event) => processDate(event, crawler, today))
+    .map((event) => processDate(event as Event, crawler, today))
 }
 
-const processDate = (event: Event, crawler: Crawler, today: Date) => {
+const processDate = (event: Event, crawler: Crawler, today: Date): Event => {
   try {
     const [eventDateString, formatString] = crawler.prepareDate(event.start)
     const eventDate =
