@@ -1,8 +1,17 @@
-import puppeteer, { EvaluateFn } from 'puppeteer'
+import puppeteer, { EvaluateFn } from 'puppeteer-core'
 
 export const openBrowser = async (): Promise<Browser> => {
-  const browser = await puppeteer.launch({ executablePath: '/usr/bin/vivaldi' })
+  const browser = await startPuppeteer()
   return new Browser(browser)
+}
+
+const startPuppeteer = async (): Promise<puppeteer.Browser> => {
+  if (process.env.BROWSER_WS_ENDPOINT) {
+    return puppeteer.connect({
+      browserWSEndpoint: process.env.BROWSER_WS_ENDPOINT,
+    })
+  }
+  return puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
 }
 
 export class Browser {

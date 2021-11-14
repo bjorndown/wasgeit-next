@@ -1,6 +1,7 @@
 import {
   getMonth,
   getYear,
+  isPast,
   parse,
   parseISO,
   setYear,
@@ -8,7 +9,7 @@ import {
 } from 'date-fns'
 import _ from 'lodash'
 import { logger } from './logging'
-import { Page } from './browser'
+import { openBrowser, Page } from './browser'
 import { Event } from '@wasgeit/common/src/types'
 import { de } from 'date-fns/locale'
 
@@ -19,7 +20,40 @@ export type Crawler = {
   prepareDate: (date: string) => [string, 'ISO' | string]
 }
 
-export const postProcess = (events: Event[], crawler: Crawler): Event[] => {
+export const runCrawlers = async (
+  crawlers: Promise<Crawler>[]
+): Promise<Event[]> => {
+  const browser = await openBrowser()
+  let events: Event[] = []
+
+  for await (const crawler of crawlers) {
+    try {
+      logger.log({ level: 'info', message: `crawling ${crawler.name}` })
+      const page = await browser.openPage(crawler.url)
+      const rawEvents = await crawler.crawl(page)
+      const eventsWithVenue = rawEvents.map((rawEvent) => ({
+        ...rawEvent,
+        venue: crawler.name,
+      }))
+
+      events = events.concat(
+        postProcess(eventsWithVenue, crawler).filter(
+          (event) => !isPast(parseISO(event.start))
+        )
+      )
+    } catch (error) {
+      logger.error({ level: 'error', message: 'error during crawling', error })
+    }
+  }
+
+  await browser.close()
+
+  logger.log({ level: 'info', message: `collected ${events.length} events` })
+
+  return events
+}
+
+const postProcess = (events: Event[], crawler: Crawler): Event[] => {
   let today = new Date()
   return events
     .filter((event) => {
