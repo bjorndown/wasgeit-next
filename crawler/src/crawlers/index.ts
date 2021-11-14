@@ -9,4 +9,6 @@ const crawlers: Promise<Crawler>[] = fs
     import(path.join(__dirname, moduleName)).then((module) => module.default)
   )
 
+console.dir(crawlers)
+console.dir(fs.readdirSync(__dirname))
 export default crawlers
