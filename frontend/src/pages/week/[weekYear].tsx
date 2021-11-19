@@ -32,7 +32,7 @@ const Index = () => {
       <footer>
         <Scroller weekNumber={weekNumber} year={year} />
       </footer>
-      {/* language=css*/}
+      {/* language=css */}
       <style jsx>{`
         .container {
           display: grid;
@@ -57,7 +57,7 @@ const Index = () => {
         }
 
         footer {
-          box-shadow: 0 -3px 7px var(--shadow-color);
+          box-shadow: 0 0 7px var(--shadow-color);
           grid-area: scroll;
           height: var(--footer-height);
         }

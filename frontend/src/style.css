@@ -75,8 +75,8 @@ a {
 
 @media (min-height: 850px) {
     :root {
-        --header-height: 3.5vh;
-        --footer-height: 3.5vh;
+        --header-height: 4vh;
+        --footer-height: 4vh;
     }
 }
 

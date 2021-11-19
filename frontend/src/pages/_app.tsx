@@ -12,6 +12,7 @@ function MyApp({ Component, pageProps }) {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <meta name="description" content="todo" />
         <title>wasgeit</title>
+        <link rel="preconnect" href="https://wasgeit.eu-central-1.linodeobjects.com" />
       </Head>
       <SWRConfig value={{ fetcher }}>
         <Component {...pageProps} />

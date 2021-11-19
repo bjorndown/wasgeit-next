@@ -12,20 +12,16 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
     format(date, 'EEE dd. MMM', { locale: de })
 
   return (
-    <article className="events-of-the-day">
+    <article className="events-of-the-day" data-day={date}>
       <h2>{formatDateLong(parseISO(date))}</h2>
-      <ul>
-        {events.map((event) => (
-          <li key={event.url}>
-            <a href={event.url}>
-              <article className="event" data-start-date={event.start}>
-                <span className="venue-name">{event.venue}</span>
-                <span className="event-title">{event.title}</span>
-              </article>
-            </a>
-          </li>
-        ))}
-      </ul>
+      {events.map((event) => (
+        <a key={event.url} href={event.url}>
+          <article className="event" data-start-date={event.start}>
+            <span className="venue-name">{event.venue}</span>
+            <span className="event-title">{event.title}</span>
+          </article>
+        </a>
+      ))}
       {/* language=css*/}
       <style jsx>{`
         h2 {
@@ -45,6 +41,7 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
         }
 
         article.events-of-the-day {
+          font-size: var(--large-font-size);
         }
 
         article.event {
@@ -57,10 +54,6 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
 
         article.event:first-of-type {
           margin-top: var(--xl-padding);
-        }
-
-        ul {
-          list-style: none;
         }
       `}</style>
     </article>

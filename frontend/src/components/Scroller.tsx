@@ -46,7 +46,6 @@ export const Scroller = ({ weekNumber, year }: Props) => {
           justify-content: space-around;
           align-items: center;
           list-style: none;
-          font-size: var(--large-font-size);
           margin-top: var(--large-padding);
         }
 
