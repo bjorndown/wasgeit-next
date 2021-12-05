@@ -488,11 +488,14 @@ __metadata:
     "@types/node": 16.11.6
     "@types/react": 17.0.33
     "@wasgeit/common": "*"
+    classname: 0.0.0
     date-fns: 2.25.0
     next: 12.0.1
     prettier: 2.4.1
     react: 17.0.2
     react-dom: 17.0.2
+    react-intersection-observer: 8.32.2
+    react-swipeable: 6.2.0
     swr: 1.0.1
     typescript: 4.4.4
   languageName: unknown
@@ -1074,6 +1077,13 @@ __metadata:
     inherits: ^2.0.1
     safe-buffer: ^5.0.1
   checksum: 47d3568dbc17431a339bad1fe7dff83ac0891be8206911ace3d3b818fc695f376df809bea406e759cdea07fff4b454fa25f1013e648851bec790c1d75763032e
+  languageName: node
+  linkType: hard
+
+"classname@npm:0.0.0":
+  version: 0.0.0
+  resolution: "classname@npm:0.0.0"
+  checksum: 9a6440dc90d49343507813c751e55b8fece0f10e6195c40b88a795d866af302b6f8402d4490a6aa13be876149a76779b77d0c362ed37cf391c9c405b5c3edbe6
   languageName: node
   linkType: hard
 
@@ -3615,6 +3625,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-intersection-observer@npm:8.32.2":
+  version: 8.32.2
+  resolution: "react-intersection-observer@npm:8.32.2"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0
+  checksum: d536ed70dff9930539472b745e24cba80048d6e47d0188dbda49bc7151b2e52dd5829744119b763f2e3cfd68025c2afe88826eb1b6c619df94001b2d87a8839c
+  languageName: node
+  linkType: hard
+
 "react-is@npm:17.0.2":
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
@@ -3642,6 +3661,15 @@ __metadata:
     react-dom: 0.0.0-experimental-3c4c1c470-20211021
     webpack: ^4.43.0
   checksum: 536d9017b50884d599f184baa9e4d39a5a255f3a8ca3d5f96401bbd0e49504e5b46cc0ebccf52cec32d3745b062d5f520beafb817df1ab62a42a8fe56382e4e7
+  languageName: node
+  linkType: hard
+
+"react-swipeable@npm:6.2.0":
+  version: 6.2.0
+  resolution: "react-swipeable@npm:6.2.0"
+  peerDependencies:
+    react: ^16.8.3 || ^17
+  checksum: 110a046c6ae7a6222ef57c2bfbee1d006c8399224f3f69eecf0a4c6fd42ac346dc5512b108e66189f21c405e476bfd8b5f776b07443cf2d5c76ae6d00207f8af
   languageName: node
   linkType: hard
 

@@ -1,57 +1,128 @@
-import React from 'react'
-import { getISOWeek } from 'date-fns'
+import React, { useMemo } from 'react'
+import Link from 'next/link'
+import { ISODate } from '@wasgeit/common/src/types'
+import { format, isMonday, isWeekend, parseISO } from 'date-fns'
+import { de } from 'date-fns/locale'
+import classname from 'classname'
 
 type Props = {
-  weekNumber: number
-  year: number
+  topDate: ISODate
+  allDates: ISODate[]
+  hidden: boolean
 }
 
-export const Scroller = ({ weekNumber, year }: Props) => {
-  const currentWeekNumber = getISOWeek(new Date())
+export const Scroller = ({ topDate, allDates, hidden = true }: Props) => {
+  const datesPerMonth = useMemo(() => {
+    return allDates.reduce<Record<string, ISODate[]>>((agg, date) => {
+      const parsedDate = parseISO(date)
+      const month = format(parsedDate, 'yyyy-MM-01')
+      if (!agg[month]) {
+        agg[month] = []
+      }
+      agg[month].push(date)
+      return agg
+    }, {})
+  }, [allDates])
+
+  const formatDateLong = (date: Date) => format(date, 'EEE dd.', { locale: de })
+
+  if (hidden) {
+    return null
+  }
 
   return (
-    <nav>
-      <ul>
-        {weekNumber > currentWeekNumber && (
-          <li>
-            <a title="Gehe zur letzen Woche" className="scroll" href={`/week/${year}-${weekNumber - 1}`}>
-              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="100,0 0,50 100,100" />
-              </svg>
-            </a>
-          </li>
-        )}
-        {weekNumber !== currentWeekNumber && (
-          <li>
-            <a title="Gehe zur aktuellen Woche" className="scroll" href={`/week/${year}-${currentWeekNumber}`}>
-              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="50" />
-              </svg>
-            </a>
-          </li>
-        )}
-        <li>
-          <a title="Gehe zur nächsten Woche" className="scroll" href={`/week/${year}-${weekNumber + 1}`}>
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <polygon points="0,0 100,50 0,100" />
-            </svg>
-          </a>
-        </li>
-      </ul>
+    <nav className={classname({ 'slide-in': !hidden, 'slide-out': hidden })}>
+      <ol>
+        {Object.entries(datesPerMonth).map(([month, dates]) => {
+          return (
+            <li key={month}>
+              <h2 className="month">
+                {format(parseISO(month), 'MMM', { locale: de })}
+              </h2>
+              <ol>
+                {dates.sort().map((date) => {
+                  const date1 = parseISO(date)
+                  return (
+                    <li key={date}>
+                      <Link
+                        passHref={true}
+                        shallow={true}
+                        scroll={false}
+                        href={`?top=${date}`}
+                      >
+                        <a
+                          className={classname('date', {
+                            topDate: date === topDate,
+                            weekend: isWeekend(date1),
+                            monday: isMonday(date1),
+                          })}
+                        >
+                          {formatDateLong(date1)}
+                        </a>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ol>
+            </li>
+          )
+        })}
+      </ol>
       {/* language=css*/}
       <style jsx>{`
-        nav ul {
-          display: flex;
-          flex-flow: row wrap;
-          justify-content: space-around;
-          align-items: center;
-          list-style: none;
-          margin-top: var(--large-padding);
+        nav {
+          background-color: var(--bg-color);
+          position: fixed;
+          top: 0;
+          right: 0;
+          z-index: 10;
+          box-shadow: var(--color) 0 0 5px;
+          height: 100vh;
+          padding: var(--large-padding);
+          overflow: auto;
+          width: 8rem;
+          color: var(--color);
         }
 
-        svg {
-          height: var(--medium-font-size);
-          fill: var(--color);
+        .slide-in {
+          animation: 500ms 1 ease-in slide;
+        }
+
+        .slide-out {
+          animation: 500ms 1 ease-out slide;
+        }
+
+        .month {
+          color: var(--color);
+          margin: 1rem 0;
+          font-size: var(--large-font-size);
+        }
+
+        .date {
+          font-size: var(--medium-font-size);
+          margin-bottom: 0.5rem;
+          padding: var(--padding) var(--large-padding);
+        }
+
+        .topDate {
+          background-color: var(--invert-bg-color);
+          color: var(--invert-color);
+        }
+
+        .weekend {
+        }
+
+        .monday {
+        }
+
+        @keyframes slide {
+          from {
+            width: 0;
+          }
+
+          to {
+            width: 8rem;
+          }
         }
       `}</style>
     </nav>

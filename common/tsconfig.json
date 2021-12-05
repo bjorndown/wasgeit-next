@@ -4,10 +4,11 @@
     "target": "esnext",
     "composite": true,
     "module": "CommonJS",
+    "declaration": true,
     "outDir": ".build",
+    "declarationMap": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "moduleResolution": "node"
   }
 }
