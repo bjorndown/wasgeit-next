@@ -38,12 +38,18 @@ export class Page {
   }
 }
 
+
 export class Element {
   constructor(private element: puppeteer.ElementHandle) {}
 
   async getAttribute(attributeName: string): Promise<string> {
     return this.element.evaluate(
-      (e, attr) => e.attributes.getNamedItem(attr)?.textContent?.trim() ?? '',
+      (e, attr) =>
+        e.attributes
+          .getNamedItem(attr)
+          ?.textContent?.trim()
+          .replaceAll(/\n/g, '')
+          .replaceAll(/[ ]{2,}/g, ' ') ?? '',
       attributeName
     )
   }
@@ -59,13 +65,25 @@ export class Element {
   }
 
   async textContent(): Promise<string> {
-    return this.element.evaluate((e) => e.textContent?.trim() ?? '')
+    return this.element.evaluate(
+      (e) =>
+        e.textContent
+          ?.trim()
+          .replaceAll(/\n/g, '')
+          .replaceAll(/[ ]{2,}/g, ' ') ?? '',
+    )
   }
 
   async childText(selector: string): Promise<string> {
     const element = await this.query(selector)
     return element
-      ? (await element.evaluate((e) => e.textContent?.trim())) ?? ''
+      ? await element.evaluate(
+          (e) =>
+            e.textContent
+              ?.trim()
+              .replaceAll(/\n/g, '')
+              .replaceAll(/[ ]{2,}/g, ' ') ?? '',
+        )
       : ''
   }
 

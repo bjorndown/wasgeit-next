@@ -1,11 +1,11 @@
 import {
+  endOfDay,
   getMonth,
   getYear,
   isPast,
   parse,
   parseISO,
   setYear,
-  startOfDay,
 } from 'date-fns'
 import _ from 'lodash'
 import { logger } from './logging'
@@ -45,11 +45,11 @@ export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
           eventsWithVenue,
           crawler
         ).filter((event) => !isPast(parseISO(event.start)))
-      } catch (error) {
+      } catch (error: any) {
         logger.error({
           level: 'error',
           message: 'error during crawling',
-          error,
+          error: error.toString(),
         })
       }
     })
@@ -85,7 +85,7 @@ const processDate = (event: Event, crawler: Crawler, today: Date): Event => {
     const eventDate =
       formatString === 'ISO'
         ? parseISO(eventDateString)
-        : parse(eventDateString, formatString, startOfDay(new Date()), {
+        : parse(eventDateString, formatString, endOfDay(new Date()), {
             locale: de,
           })
 
