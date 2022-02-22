@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ISODate } from '@wasgeit/common/src/types'
 import { format, isMonday, isWeekend, parseISO } from 'date-fns'
 import { de } from 'date-fns/locale'
-import classname from 'classname'
+import classNames from 'classnames'
 
 type Props = {
   topDate: ISODate
@@ -31,7 +31,7 @@ export const Scroller = ({ topDate, allDates, hidden = true }: Props) => {
   }
 
   return (
-    <nav className={classname({ 'slide-in': !hidden, 'slide-out': hidden })}>
+    <nav className={classNames({ 'slide-in': !hidden, 'slide-out': hidden })}>
       <ol>
         {Object.entries(datesPerMonth).map(([month, dates]) => {
           return (
@@ -51,7 +51,7 @@ export const Scroller = ({ topDate, allDates, hidden = true }: Props) => {
                         href={`?top=${date}`}
                       >
                         <a
-                          className={classname('date', {
+                          className={classNames('date', {
                             topDate: date === topDate,
                             weekend: isWeekend(date1),
                             monday: isMonday(date1),

@@ -1,7 +1,8 @@
 import { Event, EventsByDate, ISODate } from '@wasgeit/common/src/types'
-import { formatISO, isFuture, isToday, parseISO } from 'date-fns'
+import { isFuture, isToday, parseISO } from 'date-fns'
 import { useMemo } from 'react'
 import { useEvents } from './useEvents'
+import { formatInTimeZone } from 'date-fns-tz'
 
 const groupByDate = (events: Event[]): [ISODate, Event[]][] => {
   const eventsByDate: EventsByDate = {}
@@ -12,7 +13,11 @@ const groupByDate = (events: Event[]): [ISODate, Event[]][] => {
     )
     .map((event) => {
       const eventStart = parseISO(event.start)
-      const eventDate = formatISO(eventStart, { representation: 'date' })
+      const eventDate = formatInTimeZone(
+        eventStart,
+        'Europe/Zurich',
+        'yyyy-MM-dd'
+      )
       if (!eventsByDate[eventDate]) {
         eventsByDate[eventDate] = []
       }
@@ -22,7 +27,7 @@ const groupByDate = (events: Event[]): [ISODate, Event[]][] => {
   return Object.entries(eventsByDate).sort()
 }
 
-export const useEventsPage = () => {
+export const useGroupedEvents = () => {
   const { events, isValidating } = useEvents()
 
   const eventsByDate = useMemo(() => {

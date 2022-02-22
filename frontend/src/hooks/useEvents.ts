@@ -3,13 +3,13 @@ import { Event } from '@wasgeit/common/src/types'
 
 export const useEvents = () => {
   const {
-    data: { events },
+    data: events,
     error,
     isValidating,
-  } = useSWR<{ events: Event[] }>(
+  } = useSWR<Event[]>(
     'https://wasgeit.eu-central-1.linodeobjects.com/events.json',
     {
-      fallbackData: { events: [] },
+      fallbackData: [],
     }
   )
   return { events, error, isValidating }

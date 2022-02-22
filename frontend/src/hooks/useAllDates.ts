@@ -1,6 +1,7 @@
 import { useEvents } from './useEvents'
 import { useMemo } from 'react'
-import { formatISO, isFuture, isToday, parseISO } from 'date-fns'
+import { isFuture, isToday, parseISO } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 
 export const useAllDates = () => {
   const { events, isValidating } = useEvents()
@@ -13,7 +14,11 @@ export const useAllDates = () => {
       new Set(
         events
           .map((event) =>
-            formatISO(parseISO(event.start), { representation: 'date' })
+            formatInTimeZone(
+              parseISO(event.start),
+              'Europe/Zurich',
+              'yyyy-MM-dd'
+            )
           )
           .filter((date) => isFuture(parseISO(date)) || isToday(parseISO(date)))
       )
