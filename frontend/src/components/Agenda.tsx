@@ -1,17 +1,18 @@
-import { compareAsc, formatISO, parseISO } from 'date-fns'
+import { compareAsc, parseISO } from 'date-fns'
 import { EventsOfTheDay } from './EventsOfTheDay'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Scroller } from './Scroller'
 import { useAllDates } from '../hooks/useAllDates'
 import { useSwipeable } from 'react-swipeable'
 import { useGroupedEvents } from '../hooks/useGroupedEvents'
 import { Spinner } from './Spinner'
 import { ISODate } from '@wasgeit/common/src/types'
-import { useRouter } from 'next/router'
 
 type Props = {
   container: Element
 }
+
+const BUFFER_SIZE = 10
 
 export const Agenda = ({ container }: Props) => {
   const [scrollerHidden, setScrollerHidden] = useState(true)
@@ -19,28 +20,11 @@ export const Agenda = ({ container }: Props) => {
     onSwipedLeft: () => setScrollerHidden(false),
     onSwipedRight: () => setScrollerHidden(true),
   })
-  const [topDate, setTopDate] = useState<ISODate>()
   const allDates = useAllDates()
   const { events, isValidating } = useGroupedEvents()
-  const router = useRouter()
   const [visibleDates, setVisibleDates] = useState<ISODate[]>([])
-
-  useEffect(() => {
-    if (router.isReady) {
-      const top = Array.isArray(router.query.top)
-        ? router.query.top[0]
-        : router.query.top
-      if (top) {
-        setTopDate(top)
-        setTimeout(() => document.querySelector(`#date-${top}`).scrollTo(), 100)
-      } else {
-        setTopDate(formatISO(new Date(), { representation: 'date' }))
-      }
-    }
-  }, [router.query])
-
-  useEffect(() => {
-    setTopDate(visibleDates[0])
+  const topDate = useMemo(() => {
+    return visibleDates[0]
   }, [visibleDates])
 
   const eventsPage = useMemo(() => {
@@ -49,9 +33,12 @@ export const Agenda = ({ container }: Props) => {
     }
 
     const topDateIndex = events.map((entry) => entry[0]).indexOf(topDate)
-    const start = topDateIndex > 3 ? topDateIndex - 3 : 0
+
+    const start = topDateIndex > BUFFER_SIZE ? topDateIndex - BUFFER_SIZE : 0
     const end =
-      topDateIndex + 3 > events.length ? events.length - 1 : topDateIndex + 3
+      topDateIndex + BUFFER_SIZE > events.length
+        ? events.length - 1
+        : topDateIndex + BUFFER_SIZE
     return events.slice(start, end)
   }, [topDate, events])
 
