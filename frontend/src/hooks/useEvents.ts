@@ -7,7 +7,7 @@ export const useEvents = () => {
     error,
     isValidating,
   } = useSWR<Event[]>(
-    'https://wasgeit.eu-central-1.linodeobjects.com/events.json',
+    'https://redcoast.fra1.digitaloceanspaces.com/wasgeit/events.json',
     {
       fallbackData: [],
     }
