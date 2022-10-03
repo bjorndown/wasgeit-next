@@ -1,39 +1,27 @@
-import { format, parseISO } from 'date-fns'
+import { format, isSameYear, parseISO } from 'date-fns'
 import { de } from 'date-fns/locale'
-import { ISODate, Event } from '@wasgeit/common/src/types'
-import { useInView } from 'react-intersection-observer'
-import { useEffect } from 'react'
+import { Event, ISODate } from '@wasgeit/common/src/types'
 
 type Props = {
   date: ISODate
   events: Event[]
-  container: Element
-  onVisible: (date: ISODate, visible: boolean) => void
 }
 
 export const EventsOfTheDay = ({
   date,
   events,
-  container,
-  onVisible,
 }: Props) => {
-  const { ref, inView, entry } = useInView({
-    threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
-    root: container,
-  })
-
-  const formatDateLong = (date: Date) =>
-    format(date, 'EEE dd. MMM', { locale: de })
-
-  useEffect(() => {
-    const visible = inView && entry?.intersectionRatio > 0.15
-    onVisible(date, visible)
-  }, [inView, entry])
+  const formatDateLong = (date: Date) => {
+    if (isSameYear(new Date(), date)) {
+      return format(date, 'EEE dd. MMM', { locale: de })
+    } else {
+      return format(date, 'EEE dd. MMM yyyy', { locale: de })
+    }
+  }
 
   return (
     <article
       id={`date-${date}`}
-      ref={ref}
       className="events-of-the-day"
       data-day={date}
     >
@@ -46,7 +34,7 @@ export const EventsOfTheDay = ({
           </article>
         </a>
       ))}
-      {/* language=css*/}
+
       <style jsx>{`
         h2 {
           font-size: var(--medium-font-size);
