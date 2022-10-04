@@ -12,6 +12,7 @@ export const useEvents = () => {
     `${S3_HOST}/wasgeit/events.json`,
     {
       fallbackData: [],
+      revalidateOnFocus: false,
     }
   )
   return { events, error, isValidating }
