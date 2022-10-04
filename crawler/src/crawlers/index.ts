@@ -11,6 +11,7 @@ import { crawler as schueuer } from './schueuer'
 import { crawler as turnhalle } from './turnhalle'
 import { crawler as oldcapitol } from './oldcapitol'
 import { crawler as kufa } from './kufa'
+import { crawler as roessli } from './roessli'
 
 export default [
   bierhuebeli,
@@ -26,4 +27,5 @@ export default [
   turnhalle,
   oldcapitol,
   kufa,
+  roessli
 ]

@@ -1,4 +1,5 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import zlib from 'node:zlib'
 
 const getEnvVar = (name: string): string => {
   const enVar = process.env[name]
@@ -29,11 +30,11 @@ export const uploadFile = async (
   const params = {
     Bucket: SPACE_NAME,
     Key: `${BUCKET_NAME}/${fileName}`,
-    Body: data,
+    Body: zlib.gzipSync(data),
     ACL: 'public-read',
-    Metadata: {
-      'x-amz-meta-content-type': 'application/json',
-    },
+    ContentType: 'application/json',
+    ContentEncoding: 'gzip',
+    CacheControl: 'max-age=86400',
   }
   await s3Client.send(new PutObjectCommand(params))
 }
