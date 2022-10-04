@@ -21,7 +21,7 @@ export const crawler: Crawler = {
     )
   },
   prepareDate: (date: string) => {
-    const cleaned = date.slice(3)
+    const cleaned = date.slice(2)
     return [cleaned, 'dd.MM.']
   },
 }
