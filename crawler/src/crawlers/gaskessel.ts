@@ -1,21 +1,25 @@
 import { Page } from '../browser'
 import { Crawler } from '../crawler'
 
+const HOST = 'https://gaskessel.ch'
+
 export const crawler: Crawler = {
   name: 'Gaskessel',
-  url: 'https://gaskessel.ch/',
+  url: `${HOST}/programm/`,
   crawl: async (page: Page) => {
-    const elements = await page.query('#grid .thumb')
+    const elements = await page.query('.eventpreview ')
 
-    return await Promise.all(
+    return Promise.all(
       elements.map(async (element) => {
         const [start, title, url] = await Promise.all([
-          element.childText('._Headline_Description'),
+          element.childText('.eventdatum'),
+          element.childText('.eventname'),
           element
-            .getAttribute('data-title')
-            .then((title) => title.replace('○ ', '')),
-          element.getAttribute('href'),
+            .query('a')
+            .then((element) => element?.getAttribute('data-url'))
+            .then((path) => `${HOST}${path}`),
         ])
+
         return { start, title, url }
       })
     )

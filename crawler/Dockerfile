@@ -1,0 +1,16 @@
+ARG IMAGE_VER="16-alpine3.16"
+FROM node:${IMAGE_VER} as build
+
+WORKDIR /opt/wasgeit
+
+ADD . .
+
+RUN yarn install --immutable
+
+RUN cd crawler && yarn build
+
+FROM node:${IMAGE_VER} as runtime
+
+COPY --from=build /opt/wasgeit/crawler/dist/index.js .
+
+CMD ["node", "index.js"]

@@ -19,7 +19,7 @@ export const crawler: Crawler = {
     )
   },
   prepareDate: (date: string) => {
-    const cleaned = date.slice(5).replace('- Doors: ', '')
+    const cleaned = date.replace('- Doors: ', '').slice(4, 20)
     return [cleaned, 'd.M yyyy HH:mm']
   },
 }

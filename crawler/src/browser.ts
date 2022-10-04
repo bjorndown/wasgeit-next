@@ -1,4 +1,4 @@
-import puppeteer, { EvaluateFn } from 'puppeteer-core'
+import puppeteer from 'puppeteer-core'
 
 export const openBrowser = async (): Promise<Browser> => {
   const browser = await startPuppeteer()
@@ -20,7 +20,7 @@ export class Browser {
   async openPage(url: string): Promise<Page> {
     const page = await this.browser.newPage()
     await page.goto(url)
-    await page.waitForTimeout(2000)
+    await new Promise((resolve) => setTimeout(resolve, 2_000))
     return new Page(page)
   }
 
@@ -38,18 +38,17 @@ export class Page {
   }
 }
 
-
 export class Element {
   constructor(private element: puppeteer.ElementHandle) {}
 
   async getAttribute(attributeName: string): Promise<string> {
     return this.element.evaluate(
-      (e, attr) =>
-        e.attributes
+      (element, attr) =>
+        element.attributes
           .getNamedItem(attr)
           ?.textContent?.trim()
           .replaceAll(/\n/g, '')
-          .replaceAll(/[ ]{2,}/g, ' ') ?? '',
+          .replaceAll(/ {2,}/g, ' ') ?? '',
       attributeName
     )
   }
@@ -66,28 +65,30 @@ export class Element {
 
   async textContent(): Promise<string> {
     return this.element.evaluate(
-      (e) =>
-        e.textContent
+      (element) =>
+        element.textContent
           ?.trim()
           .replaceAll(/\n/g, '')
-          .replaceAll(/[ ]{2,}/g, ' ') ?? '',
+          .replaceAll(/ {2,}/g, ' ') ?? ''
     )
   }
 
   async childText(selector: string): Promise<string> {
     const element = await this.query(selector)
     return element
-      ? await element.evaluate(
-          (e) =>
-            e.textContent
+      ? element.evaluate(
+          (element) =>
+            element.textContent
               ?.trim()
               .replaceAll(/\n/g, '')
-              .replaceAll(/[ ]{2,}/g, ' ') ?? '',
+              .replaceAll(/ {2,}/g, ' ') ?? ''
         )
       : ''
   }
 
-  async evaluate<T extends EvaluateFn>(fn: T, ...args: any[]) {
-    return this.element.evaluate<T>(fn, args)
+  async evaluate(
+    ...params: Parameters<typeof this.element.evaluate>
+  ): Promise<ReturnType<typeof this.element.evaluate>> {
+    return this.element.evaluate(...params)
   }
 }

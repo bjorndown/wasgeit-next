@@ -13,3 +13,4 @@ yarn-error.log
 *.log
 *.tsbuildinfo
 .env
+dist/

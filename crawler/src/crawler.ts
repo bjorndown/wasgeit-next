@@ -80,8 +80,8 @@ const postProcess = (events: RawEvent[], crawler: Crawler): Event[] => {
 }
 
 const processDate = (event: Event, crawler: Crawler, today: Date): Event => {
+  const [eventDateString, formatString] = crawler.prepareDate(event.start)
   try {
-    const [eventDateString, formatString] = crawler.prepareDate(event.start)
     const eventDate =
       formatString === 'ISO'
         ? parseISO(eventDateString)
@@ -103,7 +103,12 @@ const processDate = (event: Event, crawler: Crawler, today: Date): Event => {
       start: eventDate.toISOString(),
     }
   } catch (error) {
-    logger.log({ level: 'error', message: 'error while parsing', event, error })
+    logger.log({
+      level: 'error',
+      message: `error while parsing '${eventDateString}' as '${formatString}'`,
+      event,
+      error,
+    })
     throw error
   }
 }
