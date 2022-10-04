@@ -1,38 +1,37 @@
-import { compareAsc, parseISO } from 'date-fns'
 import { EventsOfTheDay } from './EventsOfTheDay'
-import { useState } from 'react'
-import { useSwipeable } from 'react-swipeable'
 import { useGroupedEvents } from '../hooks/useGroupedEvents'
 import { Spinner } from './Spinner'
 
 type Props = {
-  container: Element
+  searchString: string
 }
 
-export const Agenda = ({ container }: Props) => {
-  const [scrollerHidden, setScrollerHidden] = useState(true)
-  const handlers = useSwipeable({
-    onSwipedLeft: () => setScrollerHidden(false),
-    onSwipedRight: () => setScrollerHidden(true)
-  })
-  const { events, isValidating } = useGroupedEvents()
+export const Agenda = ({ searchString }: Props) => {
+  const { events, isValidating } = useGroupedEvents(searchString)
 
   if (isValidating) {
     return <Spinner />
   }
 
+  if (events.length === 0) {
+    return (
+      <>
+        <h2>leider</h2>
+        <style jsx>{`
+          h2 {
+            color: var(--color);
+            padding: 0 var(--large-padding);
+          }
+        `}</style>
+      </>
+    )
+  }
+
   return (
-    <div {...handlers}>
-      {/*<Scroller topDate={topDate} allDates={allDates} hidden={scrollerHidden} onJump={onJump} />*/}
-      {events
-        .sort(([a], [b]) => compareAsc(parseISO(a), parseISO(b)))
-        .map(([date, events]) => (
-          <EventsOfTheDay
-            key={date}
-            date={date}
-            events={events}
-          />
-        ))}
-    </div>
+    <>
+      {events.map(([date, events]) => (
+        <EventsOfTheDay key={date} date={date} events={events} />
+      ))}
+    </>
   )
 }

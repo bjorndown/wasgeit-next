@@ -7,30 +7,23 @@ type Props = {
   events: Event[]
 }
 
-export const EventsOfTheDay = ({
-  date,
-  events,
-}: Props) => {
+export const EventsOfTheDay = ({ date, events }: Props) => {
   const formatDateLong = (date: Date) => {
     if (isSameYear(new Date(), date)) {
-      return format(date, 'EEE dd. MMM', { locale: de })
+      return format(date, 'EEE dd. MMMM', { locale: de })
     } else {
-      return format(date, 'EEE dd. MMM yyyy', { locale: de })
+      return format(date, 'EEE dd. MMMM yyyy', { locale: de })
     }
   }
 
   return (
-    <article
-      id={`date-${date}`}
-      className="events-of-the-day"
-      data-day={date}
-    >
+    <article id={`date-${date}`} className="events-of-the-day" data-day={date}>
       <h2>{formatDateLong(parseISO(date))}</h2>
       {events.map((event) => (
         <a key={event.url} href={event.url}>
           <article className="event" data-start-date={event.start}>
+            <h3 className="event-title">{event.title}</h3>
             <span className="venue-name">{event.venue}</span>
-            <span className="event-title">{event.title}</span>
           </article>
         </a>
       ))}
@@ -47,16 +40,21 @@ export const EventsOfTheDay = ({
           top: 0;
         }
 
-        span.venue-name {
+        h3 {
+          font-size: var(--medium-font-size);
+        }
+
+        .venue-name {
           font-size: var(--small-font-size);
           text-transform: uppercase;
         }
 
-        article.events-of-the-day {
+        .events-of-the-day {
           font-size: var(--large-font-size);
         }
 
-        article.event {
+        .event {
+          border-left: medium solid var(--color);
           display: flex;
           flex-flow: column wrap;
           margin-bottom: var(--xl-padding);
@@ -64,7 +62,7 @@ export const EventsOfTheDay = ({
           word-break: break-word;
         }
 
-        article.event:first-of-type {
+        .event:first-of-type {
           margin-top: var(--xl-padding);
         }
       `}</style>

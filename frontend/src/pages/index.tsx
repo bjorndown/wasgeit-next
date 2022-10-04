@@ -1,22 +1,28 @@
 import Head from 'next/head'
-import { useRef } from 'react'
+import { useState } from 'react'
 import { Agenda } from '../components/Agenda'
 
 const Index = () => {
-  const mainElement = useRef(null)
-
+  const [searchString, setSearchString] = useState<string | undefined>()
   return (
     <div className="container">
       <Head>
         <title>wasgeit</title>
       </Head>
       <header>
-        <h1>wasgeit</h1>
+        <h1>wasgeit?</h1>
+        <input
+          type="search"
+          onChange={(event) =>
+            setSearchString(event.target.value.toLocaleLowerCase())
+          }
+          size={10}
+          placeholder="such!"
+        />
       </header>
-      <main ref={mainElement}>
-        <Agenda container={mainElement.current} />
+      <main>
+        <Agenda searchString={searchString} />
       </main>
-      {/* language=css */}
       <style jsx>{`
         .container {
           display: grid;
@@ -29,7 +35,7 @@ const Index = () => {
           height: var(--header-height);
           display: flex;
           flex-flow: row wrap;
-          justify-content: space-around;
+          justify-content: space-evenly;
           align-items: center;
           color: var(--color);
         }
@@ -38,6 +44,14 @@ const Index = () => {
           grid-area: events;
           overflow: auto;
           height: calc(100vh - var(--header-height));
+        }
+
+        .search-container {
+          width: 80%;
+        }
+
+        input {
+          font-size: var(--medium-font-size);
         }
       `}</style>
     </div>
