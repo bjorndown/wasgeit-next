@@ -48,7 +48,9 @@ export class Element {
           .getNamedItem(attr)
           ?.textContent?.trim()
           .replaceAll(/\n/g, '')
-          .replaceAll(/ {2,}/g, ' ') ?? '',
+          .replaceAll(/ {2,}/g, ' ')
+          .replaceAll('\u200B', '') ?? // zero width space
+        '',
       attributeName
     )
   }
@@ -69,7 +71,9 @@ export class Element {
         element.textContent
           ?.trim()
           .replaceAll(/\n/g, '')
-          .replaceAll(/ {2,}/g, ' ') ?? ''
+          .replaceAll(/ {2,}/g, ' ')
+          .replaceAll('\u200B', '') ?? // zero width space
+        ''
     )
   }
 
@@ -81,7 +85,9 @@ export class Element {
             element.textContent
               ?.trim()
               .replaceAll(/\n/g, '')
-              .replaceAll(/ {2,}/g, ' ') ?? ''
+              .replaceAll(/ {2,}/g, ' ')
+              .replaceAll('\u200B', '') ?? // zero width space
+            ''
         )
       : ''
   }
