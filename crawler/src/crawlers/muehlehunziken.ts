@@ -13,7 +13,7 @@ export const crawler: Crawler = {
           element
             .query('time')
             .then((element) => element?.getAttribute('datetime')),
-          element.childText('.tribe-events-calendar-list__event-description'),
+          element.childText('.tribe-events-calendar-list__event-title'),
           element
             .query('.tribe-events-calendar-list__event-featured-image-link')
             .then((element) => element?.getAttribute('href')),
