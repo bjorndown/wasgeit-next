@@ -12,6 +12,7 @@ import { logger } from './logging'
 import { openBrowser, Page } from './browser'
 import { Event } from '@wasgeit/common/src/types'
 import { de } from 'date-fns/locale'
+import { zonedTimeToUtc } from 'date-fns-tz'
 
 export type RawEvent = {
   url?: string
@@ -82,12 +83,14 @@ const postProcess = (events: RawEvent[], crawler: Crawler): Event[] => {
 const processDate = (event: Event, crawler: Crawler, today: Date): Event => {
   const [eventDateString, formatString] = crawler.prepareDate(event.start)
   try {
-    const eventDate =
+    const eventDate = zonedTimeToUtc(
       formatString === 'ISO'
         ? parseISO(eventDateString)
         : parse(eventDateString, formatString, endOfDay(new Date()), {
             locale: de,
-          })
+          }),
+      'Europe/Zurich'
+    )
 
     if (getMonth(eventDate) < getMonth(today)) {
       logger.log({
