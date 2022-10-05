@@ -23,6 +23,7 @@
     "winston": "3.6.0"
   },
   "scripts": {
+    "serve": "ts-node src/index",
     "build": "ncc build src/index.ts",
     "debug": "ts-node src/debug.ts"
   },

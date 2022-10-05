@@ -1,13 +1,6 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import zlib from 'node:zlib'
-
-const getEnvVar = (name: string): string => {
-  const enVar = process.env[name]
-  if (!enVar) {
-    throw new Error(`env var ${name} not present`)
-  }
-  return enVar
-}
+import { getEnvVar } from './env'
 
 const SPACE_NAME = 'redcoast'
 const BUCKET_NAME = 'wasgeit'
