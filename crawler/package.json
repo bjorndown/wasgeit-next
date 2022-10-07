@@ -26,7 +26,7 @@
   "scripts": {
     "serve": "ts-node src/index",
     "build": "ncc build src/index.ts",
-    "debug": "ts-node src/debug.ts"
+    "debug": "CRAWLER_LOG_LEVEL=debug ts-node --transpile-only src/debug.ts",
   },
   "private": true,
   "peerDependenciesMeta": {
