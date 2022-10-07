@@ -5,24 +5,24 @@ export const crawler: Crawler = {
   name: 'Mühle Hunziken',
   url: 'https://muehlehunziken.ch/programm',
   crawl: async (page: Page) => {
-    const elements = await page.query('.tribe-events-calendar-list__event-row')
+    const elements = await page.query('main ul > li > a.customLink')
 
     return await Promise.all(
       elements.map(async (element) => {
         const [start, title, url] = await Promise.all([
-          element
-            .query('time')
-            .then((element) => element?.getAttribute('datetime')),
-          element.childText('.tribe-events-calendar-list__event-title'),
-          element
-            .query('.tribe-events-calendar-list__event-featured-image-link')
-            .then((element) => element?.getAttribute('href')),
+          element.childText('div > div:nth-child(1)'),
+          element.childText('div > div:nth-child(2)'),
+          element.getAttribute('href')
         ])
-        return { start, title, url }
+
+        const newLocal = { start, title, url }
+        console.log(newLocal)
+        return newLocal
       })
     )
   },
   prepareDate: (date: string) => {
-    return [date, 'ISO']
+    const cleaned = date.slice(3)
+    return [cleaned, 'd.M.']
   },
 }
