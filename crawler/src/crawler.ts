@@ -1,5 +1,6 @@
 import {
   endOfDay,
+  getDate,
   getMonth,
   getYear,
   isPast,
@@ -67,10 +68,10 @@ export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
 }
 
 const postProcess = (events: RawEvent[], crawler: Crawler): Event[] => {
-  let today = new Date()
+  const today = new Date()
   return events
     .filter((event) => {
-      let included =
+      const included =
         !_.isEmpty(event.start) &&
         !_.isEmpty(event.title) &&
         !_.isEmpty(event.url)
@@ -100,7 +101,11 @@ export const processDate = (event: Event, crawler: Crawler, today: Date): Event 
       eventDateLocal = setHours(eventDateLocal, 20)
     }
 
-    if (getMonth(eventDateLocal) < getMonth(today)) {
+    if (
+      getMonth(eventDateLocal) < getMonth(today) ||
+      (getMonth(eventDateLocal) === getMonth(today) &&
+        getDate(eventDateLocal) < getDate(today))
+    ) {
       logger.log({
         level: 'debug',
         message: 'moving to next year',
