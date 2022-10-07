@@ -27,7 +27,7 @@ export const uploadFile = async (
     ACL: 'public-read',
     ContentType: 'application/json',
     ContentEncoding: 'gzip',
-    CacheControl: 'max-age=86400',
+    CacheControl: `max-age=${60 * 60 * 2}`,
   }
   await s3Client.send(new PutObjectCommand(params))
 }
