@@ -4,6 +4,7 @@ import { Crawler } from '../crawler'
 export const crawler: Crawler = {
   name: 'Dachstock',
   url: 'https://www.dachstock.ch/unser-programm/',
+  providesTime: true,
   crawl: async (page: Page) => {
     const elements = await page.query('.event.event-list')
 

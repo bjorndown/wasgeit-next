@@ -5,6 +5,7 @@ import {
   isPast,
   parse,
   parseISO,
+  setHours,
   setYear,
 } from 'date-fns'
 import _ from 'lodash'
@@ -23,6 +24,7 @@ export type RawEvent = {
 export type Crawler = {
   name: string
   url: string
+  providesTime?: boolean
   crawl: (page: Page) => Promise<RawEvent[]>
   prepareDate: (date: string) => [string, 'ISO' | string]
 }
@@ -80,30 +82,38 @@ const postProcess = (events: RawEvent[], crawler: Crawler): Event[] => {
     .map((event) => processDate(event as Event, crawler, today))
 }
 
-const processDate = (event: Event, crawler: Crawler, today: Date): Event => {
+export const processDate = (event: Event, crawler: Crawler, today: Date): Event => {
   const [eventDateString, formatString] = crawler.prepareDate(event.start)
   try {
-    const eventDate = zonedTimeToUtc(
+    const referenceTime = endOfDay(new Date())
+    let eventDateLocal =
       formatString === 'ISO'
         ? parseISO(eventDateString)
-        : parse(eventDateString, formatString, endOfDay(new Date()), {
+        : parse(eventDateString, formatString, referenceTime, {
             locale: de,
-          }),
-      'Europe/Zurich'
-    )
+          })
 
-    if (getMonth(eventDate) < getMonth(today)) {
+    if (!crawler.providesTime) {
+      // if only a date is provided by the crawler setting the start time to 20:00 produces more sensible calendar entries later
+      // because if we parse a date-only value its time will be 00:00, which then produces a calendar entry from 00:00 to 23:59
+      logger.log({ level: 'debug', message: 'setting time', url: event.url })
+      eventDateLocal = setHours(eventDateLocal, 20)
+    }
+
+    if (getMonth(eventDateLocal) < getMonth(today)) {
       logger.log({
         level: 'debug',
         message: 'moving to next year',
         url: event.url,
       })
-      setYear(eventDate, getYear(today) + 1)
+      eventDateLocal = setYear(eventDateLocal, getYear(today) + 1)
     }
+
+    const eventDateUtc = zonedTimeToUtc(eventDateLocal, 'Europe/Zurich')
 
     return {
       ...event,
-      start: eventDate.toISOString(),
+      start: eventDateUtc.toISOString(),
     }
   } catch (error) {
     logger.log({

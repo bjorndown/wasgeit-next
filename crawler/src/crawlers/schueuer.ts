@@ -4,6 +4,7 @@ import { Crawler } from '../crawler'
 export const crawler: Crawler = {
   name: 'Schüür',
   url: 'https://www.schuur.ch/programm',
+  providesTime: true,
   crawl: async (page: Page) => {
     const elements = await page.query('.event-list-box')
 
