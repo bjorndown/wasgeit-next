@@ -12,12 +12,10 @@ export const crawler: Crawler = {
         const [start, title, url] = await Promise.all([
           element.childText('div > div:nth-child(1)'),
           element.childText('div > div:nth-child(2)'),
-          element.getAttribute('href')
+          element.getAttribute('href'),
         ])
 
-        const newLocal = { start, title, url }
-        console.log(newLocal)
-        return newLocal
+        return { start, title, url }
       })
     )
   },

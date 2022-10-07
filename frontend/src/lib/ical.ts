@@ -23,6 +23,5 @@ DESCRIPTION:ACHTUNG, Uhrzeit beim Veranstalter prüfen: ${event.url}
 END:VEVENT
 END:VCALENDAR
 `
-console.log(ical)
   return `data:text/calendar;base64,${Buffer.from(ical).toString('base64')}`
 }
