@@ -95,8 +95,8 @@ export const processDate = (event: Event, crawler: Crawler, today: Date): Event 
           })
 
     if (!crawler.providesTime) {
-      // if only a date is provided by the crawler setting the start time to 20:00 produces more sensible calendar entries later
-      // because if we parse a date-only value its time will be 00:00, which then produces a calendar entry from 00:00 to 23:59
+      // Setting the time to 8 o'clock produces more sensible calendar entries in the frontend
+      // If we parse a date-only value the event's start time will be 00:00, which will create a calendar entry lasting from 00:00 to 23:59
       logger.log({ level: 'debug', message: 'setting time', url: event.url })
       eventDateLocal = setHours(eventDateLocal, 20)
     }
