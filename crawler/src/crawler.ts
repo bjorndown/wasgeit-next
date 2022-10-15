@@ -1,13 +1,12 @@
 import {
   endOfDay,
-  getDate,
-  getMonth,
   getYear,
+  isBefore,
   isPast,
   parse,
   parseISO,
   setHours,
-  setYear,
+  setYear
 } from 'date-fns'
 import _ from 'lodash'
 import { logger } from './logging'
@@ -42,7 +41,7 @@ export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
         const rawEvents = await crawler.crawl(page)
         const eventsWithVenue = rawEvents.map((rawEvent) => ({
           ...rawEvent,
-          venue: crawler.name,
+          venue: crawler.name
         }))
 
         eventsPerCrawler[crawler.name] = postProcess(
@@ -53,7 +52,7 @@ export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
         logger.error({
           level: 'error',
           message: 'error during crawling',
-          error: error.toString(),
+          error: error.toString()
         })
       }
     })
@@ -69,6 +68,14 @@ export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
 
 const postProcess = (events: RawEvent[], crawler: Crawler): Event[] => {
   const today = new Date()
+
+  // Problem: Most venues only specify day and month of their events. If a venue publishes events more
+  // than a year in advance, those events will be placed in the current year.
+  // Solution: Assume venues list their events chronologically. Keep track of last event's date.
+  // If an event's date is older than that date the event must be from next year. Then we set the year
+  // accordingly.
+  let previousDate: Date
+
   return events
     .filter((event) => {
       const included =
@@ -76,14 +83,18 @@ const postProcess = (events: RawEvent[], crawler: Crawler): Event[] => {
         !_.isEmpty(event.title) &&
         !_.isEmpty(event.url)
       if (!included) {
-        logger.log({ level: 'debug', message: 'excluding', event })
+        logger.log({ level: 'warn', message: 'excluding', event })
       }
       return included
     })
-    .map((event) => processDate(event as Event, crawler, today))
+    .map((event) => {
+      const processedEvent = processDate(event as Event, crawler, today, previousDate)
+      previousDate = parseISO(processedEvent.start)
+      return processedEvent
+    })
 }
 
-export const processDate = (event: Event, crawler: Crawler, today: Date): Event => {
+export const processDate = (event: Event, crawler: Crawler, today: Date, previousDate: Date | undefined): Event => {
   const [eventDateString, formatString] = crawler.prepareDate(event.start)
   try {
     const referenceTime = endOfDay(new Date())
@@ -91,8 +102,8 @@ export const processDate = (event: Event, crawler: Crawler, today: Date): Event 
       formatString === 'ISO'
         ? parseISO(eventDateString)
         : parse(eventDateString, formatString, referenceTime, {
-            locale: de,
-          })
+          locale: de
+        })
 
     if (!crawler.providesTime) {
       // Setting the time to 8 o'clock produces more sensible calendar entries in the frontend
@@ -101,16 +112,8 @@ export const processDate = (event: Event, crawler: Crawler, today: Date): Event 
       eventDateLocal = setHours(eventDateLocal, 20)
     }
 
-    if (
-      getMonth(eventDateLocal) < getMonth(today) ||
-      (getMonth(eventDateLocal) === getMonth(today) &&
-        getDate(eventDateLocal) < getDate(today))
-    ) {
-      logger.log({
-        level: 'debug',
-        message: 'moving to next year',
-        url: event.url,
-      })
+    if (previousDate && isBefore(eventDateLocal, previousDate)) {
+      logger.log({ level: 'warn', message: 'moving to next year', url: event.url })
       eventDateLocal = setYear(eventDateLocal, getYear(today) + 1)
     }
 
@@ -118,14 +121,14 @@ export const processDate = (event: Event, crawler: Crawler, today: Date): Event 
 
     return {
       ...event,
-      start: eventDateUtc.toISOString(),
+      start: eventDateUtc.toISOString()
     }
   } catch (error) {
     logger.log({
       level: 'error',
       message: `error while parsing '${eventDateString}' as '${formatString}'`,
       event,
-      error,
+      error
     })
     throw error
   }
