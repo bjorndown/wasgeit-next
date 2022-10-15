@@ -5,9 +5,9 @@ WORKDIR /opt/wasgeit
 
 ADD . .
 
-RUN yarn install --immutable
+RUN npm install
 
-RUN cd crawler && yarn build
+RUN cd crawler && npm run build
 
 FROM node:${IMAGE_VER} as runtime
 
