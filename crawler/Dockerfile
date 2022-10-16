@@ -1,4 +1,4 @@
-ARG IMAGE_VER="16-alpine3.16"
+ARG IMAGE_VER="18-alpine3.16"
 FROM node:${IMAGE_VER} as build
 
 WORKDIR /opt/wasgeit
