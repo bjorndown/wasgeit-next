@@ -1,5 +1,5 @@
-import { logger } from './logging'
-import { Crawler, runCrawlers } from './crawler'
+import { logger } from './lib/logging'
+import { Crawler, runCrawlers } from './lib/crawler'
 import path from 'path'
 import crawlers from './crawlers'
 

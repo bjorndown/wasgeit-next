@@ -1,5 +1,5 @@
-import { Page } from '../browser'
-import { Crawler } from '../crawler'
+import { Page } from '../lib/browser'
+import { Crawler } from '../lib/crawler'
 
 export const crawler: Crawler = {
   name: 'Kofmehl',

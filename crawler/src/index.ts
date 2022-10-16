@@ -1,9 +1,9 @@
 import express from 'express'
-import { runCrawlers } from './crawler'
+import { runCrawlers } from './lib/crawler'
 import crawlers from './crawlers'
-import { uploadFile } from './upload'
-import { logger } from './logging'
-import { getEnvVar } from './env'
+import { uploadFile } from './lib/upload'
+import { logger } from './lib/logging'
+import { getEnvVar } from './lib/env'
 
 const app = express()
 const PORT = process.env.PORT ?? 8080
