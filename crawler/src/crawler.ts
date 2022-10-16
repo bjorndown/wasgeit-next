@@ -27,6 +27,7 @@ export type Crawler = {
   providesTime?: boolean
   crawl: (page: Page) => Promise<RawEvent[]>
   prepareDate: (date: string) => [string, 'ISO' | string]
+  onLoad?: () => void
 }
 
 export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
@@ -37,7 +38,7 @@ export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
     crawlers.map(async (crawler) => {
       try {
         logger.log({ level: 'info', message: `crawling ${crawler.name}` })
-        const page = await browser.openPage(crawler.url)
+        const page = await browser.openPage(crawler.url, crawler.onLoad)
         const rawEvents = await crawler.crawl(page)
         const eventsWithVenue = rawEvents.map((rawEvent) => ({
           ...rawEvent,

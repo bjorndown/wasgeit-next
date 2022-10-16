@@ -17,10 +17,17 @@ const startPuppeteer = async (): Promise<puppeteer.Browser> => {
 export class Browser {
   constructor(private browser: puppeteer.Browser) {}
 
-  async openPage(url: string): Promise<Page> {
+  async openPage(url: string, onLoad?: () => void): Promise<Page> {
     const page = await this.browser.newPage()
+
     await page.goto(url)
-    await new Promise((resolve) => setTimeout(resolve, 2_000))
+
+    if (onLoad) {
+      await page.evaluate(onLoad)
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
     return new Page(page)
   }
 
