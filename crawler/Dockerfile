@@ -7,7 +7,7 @@ ADD . .
 
 RUN npm install
 
-RUN cd crawler && npm run build
+RUN cd crawler && npm run compile && npm run test && npm run build
 
 FROM node:${IMAGE_VER} as runtime
 

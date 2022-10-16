@@ -27,6 +27,7 @@
   },
   "scripts": {
     "serve": "ts-node src/index",
+    "compile": "tsc",
     "build": "ncc build src/index.ts",
     "debug": "CRAWLER_LOG_LEVEL=debug ts-node --transpile-only src/debug.ts",
     "test": "jest",
