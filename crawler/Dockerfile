@@ -5,9 +5,9 @@ WORKDIR /opt/wasgeit
 
 ADD . .
 
-RUN npm install
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-RUN cd crawler && npm run compile && npm run test && npm run build
+RUN pnpm install && cd crawler && pnpm run compile && pnpm run test && pnpm run build
 
 FROM node:${IMAGE_VER} as runtime
 
