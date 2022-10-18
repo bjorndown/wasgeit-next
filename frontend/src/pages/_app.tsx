@@ -12,6 +12,7 @@ function MyApp({ Component, pageProps }) {
       <Head>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <meta name="description" content="todo" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
         <title>wasgeit</title>
         <link rel="preconnect" href={S3_HOST} />
       </Head>
