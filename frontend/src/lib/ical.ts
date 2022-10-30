@@ -1,5 +1,5 @@
 import { Event } from '@wasgeit/common/src/types'
-import { endOfDay, parseISO } from 'date-fns'
+import { addHours, endOfDay, parseISO } from 'date-fns'
 
 const toIcalDate = (isoString: string): string =>
   isoString
@@ -15,7 +15,7 @@ BEGIN:VEVENT
 UID:${crypto.randomUUID()}
 DTSTAMP:${toIcalDate(event.start)}
 DTSTART:${toIcalDate(event.start)}
-DTEND:${toIcalDate(endOfDay(new Date(event.start)).toISOString())}
+DTEND:${toIcalDate(addHours(new Date(event.start), 2).toISOString())}
 SUMMARY:${event.title}
 LOCATION:${event.venue}
 URL:${event.url}
