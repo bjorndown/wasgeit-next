@@ -6,6 +6,7 @@ const BASE_URL = 'https://www.turnhalle.ch'
 export const crawler: Crawler = {
   name: 'Turnhalle',
   url: BASE_URL,
+  city: 'Bern',
   crawl: async (page: Page) => {
     const elements = await page.query('.event.box > a')
 

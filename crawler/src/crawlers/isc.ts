@@ -4,6 +4,7 @@ import { Crawler } from '../lib/crawler'
 export const crawler: Crawler = {
   name: 'ISC',
   url: 'https://www.isc-club.ch',
+  city: 'Bern',
   crawl: async (page: Page) => {
     const elements = await page.query('.event_preview')
 

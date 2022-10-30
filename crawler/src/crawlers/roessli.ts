@@ -4,6 +4,7 @@ import { Crawler } from '../lib/crawler'
 export const crawler: Crawler = {
   name: 'Rössli',
   url: 'https://www.souslepont-roessli.ch/events/',
+  city: 'Bern',
   providesTime: true,
   crawl: async (page: Page) => {
     const elements = await page.query('.page-rossli-events .event a')

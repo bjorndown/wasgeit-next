@@ -5,6 +5,7 @@ const BASE_URL = 'https://www.dynamo.ch'
 
 export const crawler: Crawler = {
   name: 'Dynamo',
+  city: 'Zürich',
   url: `${BASE_URL}/veranstaltungen`,
   crawl: async (page: Page) => {
     const elements = await page.query('.group-infos')

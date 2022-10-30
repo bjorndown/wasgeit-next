@@ -6,6 +6,7 @@ const HOST = 'https://gaskessel.ch'
 export const crawler: Crawler = {
   name: 'Gaskessel',
   url: `${HOST}/programm/`,
+  city: 'Bern',
   crawl: async (page: Page) => {
     const elements = await page.query('.eventpreview ')
 

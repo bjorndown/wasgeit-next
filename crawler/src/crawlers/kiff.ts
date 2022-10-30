@@ -6,6 +6,7 @@ const BASE_URL = 'https://www.kiff.ch'
 export const crawler: Crawler = {
   name: 'Kiff',
   url: `${BASE_URL}/de/home.html?view=list`,
+  city: 'Aarau',
   crawl: async (page: Page) => {
     const elements = await page.query('.programm-grid.listview a')
 

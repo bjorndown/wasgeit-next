@@ -4,6 +4,7 @@ import { Crawler } from '../lib/crawler'
 export const crawler: Crawler = {
   name: 'Mokka',
   url: 'https://mokka.ch',
+  city: 'Thun',
   crawl: async (page: Page) => {
     const elements = await page.query('a.shows')
 

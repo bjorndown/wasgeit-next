@@ -24,6 +24,7 @@ export type RawEvent = {
 export type Crawler = {
   name: string
   url: string
+  city: string
   providesTime?: boolean
   crawl: (page: Page) => Promise<RawEvent[]>
   prepareDate: (date: string) => [string, 'ISO' | string]

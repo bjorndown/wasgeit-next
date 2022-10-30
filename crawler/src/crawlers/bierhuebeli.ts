@@ -4,6 +4,7 @@ import { Crawler } from '../lib/crawler'
 export const crawler: Crawler = {
   name: 'Bierhübeli',
   url: 'https://bierhuebeli.ch',
+  city: 'Bern',
   crawl: async (page: Page) => {
     const elements = await page.query('.w-grid-item-h')
 

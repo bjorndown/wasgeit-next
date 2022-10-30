@@ -4,6 +4,7 @@ import { Crawler } from '../lib/crawler'
 export const crawler: Crawler = {
   name: 'Mühle Hunziken',
   url: 'https://muehlehunziken.ch/programm',
+  city: 'Rubigen',
   crawl: async (page: Page) => {
     const elements = await page.query('main ul > li > a.customLink')
 

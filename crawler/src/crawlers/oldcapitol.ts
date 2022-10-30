@@ -6,6 +6,7 @@ const BASE_URL = 'https://oldcapitol.ch'
 export const crawler: Crawler = {
   name: 'Old Capitol',
   url: `${BASE_URL}/events`,
+  city: 'Langenthal',
   crawl: async (page: Page) => {
     const elements = await page.query('.event')
 
