@@ -26,15 +26,15 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
           data-start-date={event.start}
           key={event.url}
         >
-          <a key={event.url} href={event.url}>
-            <h3 className="event-title">{event.title}</h3>
+          <a className="event-title" key={event.url} href={event.url}>
+            <h3>{event.title}</h3>
           </a>
           <a href={new URL(event.url).origin} className="venue-name">
             {event.venue}
           </a>
           <a
             href={generateIcalEntry(event)}
-            download={`${event.start}-${event.venue}.ics`}
+            download={`${date}-${event.venue}.ics`}
             type="text/calendar"
             className="calendar-entry"
           >
@@ -44,11 +44,6 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
       ))}
 
       <style jsx>{`
-        .calendar-entry {
-          font-size: 1.1rem;
-          align-self: flex-end;
-        }
-
         h2 {
           font-size: var(--medium-font-size);
           text-transform: uppercase;
@@ -60,13 +55,18 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
           top: 0;
         }
 
-        h3 {
+        .event-title {
           font-size: var(--medium-font-size);
+          width: 100%;
         }
 
         .venue-name {
           font-size: var(--small-font-size);
           text-transform: uppercase;
+        }
+
+        .calendar-entry {
+          font-size: var(--small-font-size);
         }
 
         .events-of-the-day {
@@ -76,7 +76,8 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
         .event {
           border-left: medium solid var(--color);
           display: flex;
-          flex-flow: column wrap;
+          flex-flow: row wrap;
+          justify-content: space-between;
           margin-bottom: var(--xl-padding);
           padding: 0 var(--large-padding);
           word-break: break-word;
