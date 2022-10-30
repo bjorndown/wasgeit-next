@@ -43,7 +43,7 @@ export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
         const rawEvents = await crawler.crawl(page)
         const eventsWithVenue = rawEvents.map((rawEvent) => ({
           ...rawEvent,
-          venue: crawler.name
+          venue: `${crawler.name}, ${crawler.city}`
         }))
 
         eventsPerCrawler[crawler.name] = postProcess(
