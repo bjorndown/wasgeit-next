@@ -6,9 +6,7 @@ const Index = () => {
   const [searchString, setSearchString] = useState<string | undefined>()
   return (
     <div className="container">
-      <Head>
-        <title>wasgeit</title>
-      </Head>
+
       <header>
         <h1>wasgeit?</h1>
         <input
