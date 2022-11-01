@@ -54,7 +54,7 @@ export class Element {
         element.attributes
           .getNamedItem(attr)
           ?.textContent?.trim() // cannot extract into method because scope is not available in remote browser
-          .replaceAll(/\n/g, '')
+          .replaceAll(/[\n\t]+/g, ' ')
           .replaceAll(/ {2,}/g, ' ')
           .replaceAll('\u200B', '') ?? // zero width space
         '',
@@ -77,7 +77,7 @@ export class Element {
       (element) =>
         element.textContent
           ?.trim() // cannot extract into method because scope is not available in remote browser
-          .replaceAll(/\n/g, '')
+          .replaceAll(/[\n\t]+/g, ' ')
           .replaceAll(/ {2,}/g, ' ')
           .replaceAll('\u200B', '') ?? // zero width space
         ''
@@ -91,7 +91,7 @@ export class Element {
           (element) =>
             element.textContent
               ?.trim() // cannot extract into method because scope is not available in remote browser
-              .replaceAll(/\n/g, '')
+              .replaceAll(/[\n\t]+/g, ' ')
               .replaceAll(/ {2,}/g, ' ')
               .replaceAll('\u200B', '') ?? // zero width space
             ''
