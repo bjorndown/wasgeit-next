@@ -6,7 +6,7 @@ import {
   parse,
   parseISO,
   setHours,
-  setYear
+  setYear,
 } from 'date-fns'
 import _ from 'lodash'
 import { logger } from './logging'
@@ -29,6 +29,7 @@ export type Crawler = {
   crawl: (page: Page) => Promise<RawEvent[]>
   prepareDate: (date: string) => [string, 'ISO' | string]
   onLoad?: () => void
+  waitMsBeforeCrawl?: number
 }
 
 export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
@@ -36,25 +37,25 @@ export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
 
   const eventsPerCrawler: Record<string, Event[]> = {}
   await Promise.all(
-    crawlers.map(async (crawler) => {
+    crawlers.map(async crawler => {
       try {
         logger.log({ level: 'info', message: `crawling ${crawler.name}` })
-        const page = await browser.openPage(crawler.url, crawler.onLoad)
+        const page = await browser.openPage(crawler)
         const rawEvents = await crawler.crawl(page)
-        const eventsWithVenue = rawEvents.map((rawEvent) => ({
+        const eventsWithVenue = rawEvents.map(rawEvent => ({
           ...rawEvent,
-          venue: `${crawler.name}, ${crawler.city}`
+          venue: `${crawler.name}, ${crawler.city}`,
         }))
 
         eventsPerCrawler[crawler.name] = postProcess(
           eventsWithVenue,
           crawler
-        ).filter((event) => !isPast(parseISO(event.start)))
+        ).filter(event => !isPast(parseISO(event.start)))
       } catch (error: any) {
         logger.error({
           level: 'error',
           message: 'error during crawling',
-          error: error.toString()
+          error: error.toString(),
         })
       }
     })
@@ -79,7 +80,7 @@ const postProcess = (events: RawEvent[], crawler: Crawler): Event[] => {
   let previousDate: Date
 
   return events
-    .filter((event) => {
+    .filter(event => {
       const included =
         !_.isEmpty(event.start) &&
         !_.isEmpty(event.title) &&
@@ -89,14 +90,24 @@ const postProcess = (events: RawEvent[], crawler: Crawler): Event[] => {
       }
       return included
     })
-    .map((event) => {
-      const processedEvent = processDate(event as Event, crawler, today, previousDate)
+    .map(event => {
+      const processedEvent = processDate(
+        event as Event,
+        crawler,
+        today,
+        previousDate
+      )
       previousDate = parseISO(processedEvent.start)
       return processedEvent
     })
 }
 
-export const processDate = (event: Event, crawler: Crawler, today: Date, previousDate: Date | undefined): Event => {
+export const processDate = (
+  event: Event,
+  crawler: Crawler,
+  today: Date,
+  previousDate: Date | undefined
+): Event => {
   const [eventDateString, formatString] = crawler.prepareDate(event.start)
   try {
     const referenceTime = endOfDay(new Date())
@@ -104,8 +115,8 @@ export const processDate = (event: Event, crawler: Crawler, today: Date, previou
       formatString === 'ISO'
         ? parseISO(eventDateString)
         : parse(eventDateString, formatString, referenceTime, {
-          locale: de
-        })
+            locale: de,
+          })
 
     if (!crawler.providesTime) {
       // Setting the time to 8 o'clock produces more sensible calendar entries in the frontend
@@ -115,7 +126,11 @@ export const processDate = (event: Event, crawler: Crawler, today: Date, previou
     }
 
     if (previousDate && isBefore(eventDateLocal, previousDate)) {
-      logger.log({ level: 'warn', message: 'moving to next year', url: event.url })
+      logger.log({
+        level: 'warn',
+        message: 'moving to next year',
+        url: event.url,
+      })
       eventDateLocal = setYear(eventDateLocal, getYear(today) + 1)
     }
 
@@ -123,14 +138,14 @@ export const processDate = (event: Event, crawler: Crawler, today: Date, previou
 
     return {
       ...event,
-      start: eventDateUtc.toISOString()
+      start: eventDateUtc.toISOString(),
     }
   } catch (error) {
     logger.log({
       level: 'error',
       message: `error while parsing '${eventDateString}' as '${formatString}'`,
       event,
-      error
+      error,
     })
     throw error
   }

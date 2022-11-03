@@ -14,10 +14,20 @@ const startPuppeteer = async (): Promise<puppeteer.Browser> => {
   return puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
 }
 
+export type OpenPageArgs = {
+  url: string
+  waitMsBeforeCrawl?: number
+  onLoad?: () => void
+}
+
 export class Browser {
   constructor(private browser: puppeteer.Browser) {}
 
-  async openPage(url: string, onLoad?: () => void): Promise<Page> {
+  async openPage({
+    url,
+    onLoad,
+    waitMsBeforeCrawl,
+  }: OpenPageArgs): Promise<Page> {
     const page = await this.browser.newPage()
 
     await page.goto(url)
@@ -26,7 +36,7 @@ export class Browser {
       await page.evaluate(onLoad)
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    await new Promise(resolve => setTimeout(resolve, waitMsBeforeCrawl ?? 500))
 
     return new Page(page)
   }
@@ -41,7 +51,11 @@ export class Page {
 
   async query(selector: string): Promise<Element[]> {
     const elements = await this.page.$$(selector)
-    return elements.map((element) => new Element(element))
+    return elements.map(element => new Element(element))
+  }
+
+  async source(): Promise<string> {
+    return this.page.content()
   }
 }
 
@@ -69,12 +83,12 @@ export class Element {
 
   async queryAll(selector: string): Promise<Element[]> {
     const elements = await this.element.$$(selector)
-    return elements.map((element) => new Element(element))
+    return elements.map(element => new Element(element))
   }
 
   async textContent(): Promise<string> {
     return this.element.evaluate(
-      (element) =>
+      element =>
         element.textContent
           ?.trim() // cannot extract into method because scope is not available in remote browser
           .replaceAll(/[\n\t]+/g, ' ')
@@ -88,7 +102,7 @@ export class Element {
     const element = await this.query(selector)
     return element
       ? element.evaluate(
-          (element) =>
+          element =>
             element.textContent
               ?.trim() // cannot extract into method because scope is not available in remote browser
               .replaceAll(/[\n\t]+/g, ' ')

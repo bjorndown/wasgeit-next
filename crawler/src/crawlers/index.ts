@@ -15,6 +15,8 @@ import { crawler as roessli } from './roessli'
 import { crawler as docks } from './docks'
 import { crawler as friSon } from './fri-son'
 import { crawler as cafete } from './cafete'
+import { crawler as kairo } from './kairo'
+import { crawler as marta } from './marta'
 
 export default [
   bierhuebeli,
@@ -33,5 +35,7 @@ export default [
   roessli,
   docks,
   friSon,
-  cafete
+  cafete,
+  kairo,
+  marta,
 ]
