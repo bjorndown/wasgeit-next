@@ -1,7 +1,7 @@
 import { Event, ISODate } from '@wasgeit/common/src/types'
-import { format, formatISO, isSameYear, parseISO } from 'date-fns'
+import { format, isSameYear, parseISO } from 'date-fns'
 import { de } from 'date-fns/locale'
-import { generateIcalEntry } from '../lib/ical'
+import { AddToCalendarLink } from './AddToCalendarLink'
 
 type Props = {
   date: ISODate
@@ -20,7 +20,7 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
   return (
     <article id={`date-${date}`} className="events-of-the-day" data-day={date}>
       <h2>{formatDateLong(parseISO(date))}</h2>
-      {events.map((event) => (
+      {events.map(event => (
         <article
           className="event"
           data-start-date={event.start}
@@ -32,17 +32,9 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
           <a href={new URL(event.url).origin} className="venue-name">
             {event.venue}
           </a>
-          <a
-            href={generateIcalEntry(event)}
-            download={`${date}-${event.venue}.ics`}
-            type="text/calendar"
-            className="calendar-entry"
-          >
-            grad ischribe!
-          </a>
+          <AddToCalendarLink date={date} event={event} />
         </article>
       ))}
-
       <style jsx>{`
         h2 {
           font-size: var(--medium-font-size);
@@ -65,10 +57,6 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
           text-transform: uppercase;
         }
 
-        .calendar-entry {
-          font-size: var(--small-font-size);
-        }
-
         .events-of-the-day {
           font-size: var(--large-font-size);
         }
@@ -78,6 +66,8 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
           display: flex;
           flex-flow: row wrap;
           justify-content: space-between;
+          align-items: end;
+          column-gap: 3rem;
           margin-bottom: var(--xl-padding);
           padding: 0 var(--large-padding);
           word-break: break-word;

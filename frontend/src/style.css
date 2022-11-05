@@ -1,81 +1,64 @@
 *,
 *:before,
 *:after {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
+  box-sizing: border-box;
+}
+
+body,
+ul,
+ol,
+nav,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  padding: 0;
+  margin: 0;
 }
 
 body {
-    font-family: 'Red Hat Text', 'Lato', 'Open Sans', 'FreeSans', sans-serif;
-    background-color: var(--bg-color);
+  font-family: 'Red Hat Text', 'Lato', 'Open Sans', 'FreeSans', sans-serif;
+  background-color: var(--bg-color);
 }
 
 a {
-    color: var(--color);
-    text-decoration: none;
+  color: var(--color);
+  text-decoration: none;
 }
 
 ol,
 ul {
-    list-style: none;
+  list-style: none;
 }
 
 @media (prefers-color-scheme: dark) {
-    :root {
-        --bg-color: black;
-        --color: white;
-        --invert-color: black;
-        --invert-bg-color: white;
-        --shadow-color: #fff6;
-    }
+  :root {
+    --bg-color: black;
+    --color: white;
+    --invert-color: black;
+    --invert-bg-color: white;
+    --shadow-color: #fff6;
+  }
 }
 
 @media (prefers-color-scheme: light) {
-    :root {
-        --bg-color: white;
-        --color: black;
-        --invert-color: white;
-        --invert-bg-color: black;
-        --shadow-color: #0006;
-    }
-}
-
-@media (min-height: 200px) and (max-height: 500px) {
-    :root {
-        --header-height: 10vh;
-        --footer-height: 10vh;
-    }
-}
-
-@media (min-height: 500px) and (max-height: 600px) {
-    :root {
-        --header-height: 7vh;
-        --footer-height: 7.6vh;
-    }
-}
-
-@media (min-height: 600px) and (max-height: 850px) {
-    :root {
-        --header-height: 6vh;
-        --footer-height: 6vh;
-    }
-}
-
-@media (min-height: 850px) {
-    :root {
-        --header-height: 5vh;
-        --footer-height: 5vh;
-    }
+  :root {
+    --bg-color: white;
+    --color: black;
+    --invert-color: white;
+    --invert-bg-color: black;
+    --shadow-color: #0006;
+  }
 }
 
 :root {
-    --padding: 0.2rem;
-    --large-padding: 0.4rem;
-    --xl-padding: calc(3 * var(--large-padding));
+  --padding: 0.2rem;
+  --large-padding: 0.4rem;
+  --xl-padding: calc(3 * var(--large-padding));
 
-    --large-font-size: 2rem;
-    --medium-font-size: 1.5rem;
-    --small-font-size: 1.1rem;
+  --large-font-size: 2rem;
+  --medium-font-size: 1.5rem;
+  --small-font-size: 1.1rem;
 }
-

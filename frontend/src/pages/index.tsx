@@ -6,17 +6,19 @@ const Index = () => {
   const [searchString, setSearchString] = useState<string | undefined>()
   return (
     <div className="container">
-
       <header>
-        <h1>wasgeit?</h1>
-        <input
-          type="search"
-          onChange={(event) =>
-            setSearchString(event.target.value.toLocaleLowerCase())
-          }
-          size={10}
-          placeholder="such!"
-        />
+        <nav>
+          <h1>wasgeit?</h1>
+          <input
+            type="search"
+            onChange={event =>
+              setSearchString(event.target.value.toLocaleLowerCase())
+            }
+            size={10}
+            placeholder="such!"
+          />
+          <a href="/impressum">?</a>
+        </nav>
       </header>
       <main>
         <Agenda searchString={searchString} />
@@ -26,16 +28,22 @@ const Index = () => {
           display: grid;
           grid-template-areas: 'header' 'events';
           grid-template-rows: auto 1fr;
+          max-width: 800px;
         }
 
-        header {
+        nav {
           grid-area: header;
-          height: var(--header-height);
           display: flex;
           flex-flow: row wrap;
-          justify-content: space-evenly;
+          justify-content: space-between;
+
           align-items: center;
           color: var(--color);
+          padding-left: 1rem;
+        }
+
+        nav a {
+          padding: var(--large-padding);
         }
 
         main {
@@ -44,12 +52,38 @@ const Index = () => {
           height: calc(100vh - var(--header-height));
         }
 
-        .search-container {
-          width: 80%;
-        }
-
         input {
           font-size: var(--medium-font-size);
+        }
+
+        @media (min-width: 800px) {
+          .container {
+            margin: 0 auto;
+          }
+        }
+
+        @media (min-height: 200px) and (max-height: 500px) {
+          nav {
+            height: 10vh;
+          }
+        }
+
+        @media (min-height: 500px) and (max-height: 600px) {
+          nav {
+            height: 7vh;
+          }
+        }
+
+        @media (min-height: 600px) and (max-height: 850px) {
+          nav {
+            height: 6vh;
+          }
+        }
+
+        @media (min-height: 860px) {
+          nav {
+            height: 4vh;
+          }
         }
       `}</style>
     </div>
