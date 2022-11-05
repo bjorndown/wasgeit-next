@@ -16,7 +16,7 @@ export const crawler: Crawler = {
           element
             .query('.date-display-single')
             .then((el) => el?.getAttribute('content')),
-          element.childText('h1'),
+          element.childText('.field.field-name-field-event-artists'),
           element.getAttribute('about').then((attr) => `${BASE_URL}${attr}`),
         ])
         return { start, title, url }
