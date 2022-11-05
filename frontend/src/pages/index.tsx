@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import { useState } from 'react'
 import { Agenda } from '../components/Agenda'
 
@@ -8,7 +7,11 @@ const Index = () => {
     <div className="container">
       <header>
         <nav>
-          <h1>wasgeit?</h1>
+          <h1>
+            WAS
+            <br />
+            GEIT
+          </h1>
           <input
             type="search"
             onChange={event =>
@@ -30,13 +33,14 @@ const Index = () => {
           grid-template-rows: auto 1fr;
           max-width: 800px;
         }
-
+        nav h1 {
+          line-height: 0.77;
+        }
         nav {
           grid-area: header;
           display: flex;
           flex-flow: row wrap;
           justify-content: space-between;
-
           align-items: center;
           color: var(--color);
         }
