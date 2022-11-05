@@ -1,7 +1,7 @@
 import { Event, ISODate } from '@wasgeit/common/src/types'
 import { format, isSameYear, parseISO } from 'date-fns'
 import { de } from 'date-fns/locale'
-import { AddToCalendarLink } from './AddToCalendarLink'
+import { EventItem } from './EventItem'
 
 type Props = {
   date: ISODate
@@ -21,19 +21,7 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
     <article id={`date-${date}`} className="events-of-the-day" data-day={date}>
       <h2>{formatDateLong(parseISO(date))}</h2>
       {events.map(event => (
-        <article
-          className="event"
-          data-start-date={event.start}
-          key={event.url}
-        >
-          <a className="event-title" key={event.url} href={event.url}>
-            <h3>{event.title}</h3>
-          </a>
-          <a href={new URL(event.url).origin} className="venue-name">
-            {event.venue}
-          </a>
-          <AddToCalendarLink date={date} event={event} />
-        </article>
+        <EventItem key={event.url} event={event} date={date} />
       ))}
       <style jsx>{`
         h2 {
@@ -45,36 +33,6 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
           position: -webkit-sticky; /* Safari */
           position: sticky;
           top: 0;
-        }
-
-        .event-title {
-          font-size: var(--medium-font-size);
-          width: 100%;
-        }
-
-        .venue-name {
-          font-size: var(--small-font-size);
-          text-transform: uppercase;
-        }
-
-        .events-of-the-day {
-          font-size: var(--large-font-size);
-        }
-
-        .event {
-          border-left: medium solid var(--color);
-          display: flex;
-          flex-flow: row wrap;
-          justify-content: space-between;
-          align-items: end;
-          column-gap: 3rem;
-          margin-bottom: var(--xl-padding);
-          padding: 0 var(--large-padding);
-          word-break: break-word;
-        }
-
-        .event:first-of-type {
-          margin-top: var(--xl-padding);
         }
       `}</style>
     </article>
