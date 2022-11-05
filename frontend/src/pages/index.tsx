@@ -39,11 +39,10 @@ const Index = () => {
 
           align-items: center;
           color: var(--color);
-          padding-left: 1rem;
         }
 
-        nav a {
-          padding: var(--large-padding);
+        nav :is(h1, a) {
+          padding: 0 var(--large-padding);
         }
 
         main {
