@@ -9,7 +9,7 @@ export const crawler: Crawler = {
   crawl: async (page: Page) => {
     const elements = await page.query('.event.event-list')
 
-    return await Promise.all(
+    return Promise.all(
       elements.map(async (element) => {
         const [start, title, url] = await Promise.all([
           element.childText('.event-date'),
