@@ -17,6 +17,7 @@ import { crawler as friSon } from './fri-son'
 import { crawler as cafete } from './cafete'
 import { crawler as kairo } from './kairo'
 import { crawler as marta } from './marta'
+import { crawler as xtra } from './x-tra'
 
 export default [
   bierhuebeli,
@@ -38,4 +39,5 @@ export default [
   cafete,
   kairo,
   marta,
+  xtra,
 ]
