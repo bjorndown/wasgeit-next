@@ -33,16 +33,23 @@ const Index = () => {
           grid-template-rows: auto 1fr;
           max-width: 800px;
         }
+
         nav h1 {
           line-height: 0.77;
         }
-        nav {
+
+        header {
           grid-area: header;
+          color: var(--color);
+          display: flex;
+        }
+
+        nav {
           display: flex;
           flex-flow: row wrap;
           justify-content: space-between;
           align-items: center;
-          color: var(--color);
+          width: 100%;
         }
 
         nav :is(h1, a) {
@@ -52,7 +59,6 @@ const Index = () => {
         main {
           grid-area: events;
           overflow: auto;
-          height: calc(100vh - var(--header-height));
         }
 
         input {
@@ -66,26 +72,42 @@ const Index = () => {
         }
 
         @media (min-height: 200px) and (max-height: 500px) {
-          nav {
+          header {
             height: 10vh;
+          }
+
+          main {
+            height: calc(100vh - 10vh);
           }
         }
 
         @media (min-height: 500px) and (max-height: 600px) {
-          nav {
+          header {
             height: 7vh;
+          }
+
+          main {
+            height: calc(100vh - 7vh);
           }
         }
 
         @media (min-height: 600px) and (max-height: 850px) {
-          nav {
+          header {
             height: 6vh;
+          }
+
+          main {
+            height: calc(100vh - 6vh);
           }
         }
 
         @media (min-height: 860px) {
-          nav {
+          header {
             height: 4vh;
+          }
+
+          main {
+            height: calc(100vh - 4vh);
           }
         }
       `}</style>
