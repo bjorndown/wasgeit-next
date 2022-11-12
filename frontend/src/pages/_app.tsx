@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import '../style.css'
 import { SWRConfig } from 'swr'
-import { S3_HOST } from '../hooks/useEvents'
+import { EVENTS_JSON_URL } from '../hooks/useEvents'
 import React from 'react'
 
 // @ts-ignore
@@ -21,7 +21,7 @@ function MyApp({ Component, pageProps }) {
         />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <link rel="icon" type="image/png" href="/favicon.png" />
-        <link rel="preconnect" href={S3_HOST} />
+        <link rel="preload" crossOrigin="anonymous" href={EVENTS_JSON_URL} />
         <title>wasgeit</title>
       </Head>
       <SWRConfig value={{ fetcher }}>

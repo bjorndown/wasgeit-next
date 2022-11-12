@@ -1,19 +1,17 @@
 import useSWR from 'swr'
 import { Event } from '@wasgeit/common/src/types'
 
-export const S3_HOST = 'https://redcoast.fra1.digitaloceanspaces.com'
+export const EVENTS_JSON_URL =
+  'https://redcoast.fra1.digitaloceanspaces.com/wasgeit/events.json'
 
 export const useEvents = () => {
   const {
     data: events,
     error,
     isValidating,
-  } = useSWR<Event[]>(
-    `${S3_HOST}/wasgeit/events.json`,
-    {
-      fallbackData: [],
-      revalidateOnFocus: false,
-    }
-  )
+  } = useSWR<Event[]>(EVENTS_JSON_URL, {
+    fallbackData: [],
+    revalidateOnFocus: false,
+  })
   return { events, error, isValidating }
 }
