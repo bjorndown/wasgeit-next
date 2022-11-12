@@ -20,8 +20,8 @@ export const EventsOfTheDay = ({ date, events }: Props) => {
   return (
     <article id={`date-${date}`} className="events-of-the-day" data-day={date}>
       <h2>{formatDateLong(parseISO(date))}</h2>
-      {events.map(event => (
-        <EventItem key={event.url} event={event} date={date} />
+      {events.map((event, i) => (
+        <EventItem key={`${event.url}-${i}`} event={event} date={date} />
       ))}
       <style jsx>{`
         h2 {
