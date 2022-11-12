@@ -19,8 +19,8 @@ h6 {
 }
 
 body {
-  font-family: 'Red Hat Text', 'Lato', 'Open Sans', 'FreeSans', sans-serif;
   background-color: var(--bg-color);
+  color: var(--color);
 }
 
 a {
