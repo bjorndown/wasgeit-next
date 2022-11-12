@@ -2,9 +2,10 @@ import Head from 'next/head'
 import '../style.css'
 import { SWRConfig } from 'swr'
 import { S3_HOST } from '../hooks/useEvents'
+import React from 'react'
 
 // @ts-ignore
-const fetcher = (...args) => fetch(...args).then((res) => res.json())
+const fetcher = (...args) => fetch(...args).then(res => res.json())
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -24,7 +25,9 @@ function MyApp({ Component, pageProps }) {
         <title>wasgeit</title>
       </Head>
       <SWRConfig value={{ fetcher }}>
-        <Component {...pageProps} />
+        <React.StrictMode>
+          <Component {...pageProps} />
+        </React.StrictMode>
       </SWRConfig>
     </>
   )
