@@ -6,13 +6,14 @@ import { formatInTimeZone } from 'date-fns-tz'
 
 export const groupAndFilter = (
   events: Event[],
+  limit: number,
   searchString: string | null | undefined
 ): [ISODate, Event[]][] => {
   const eventsByDate: EventsByDate = {}
   events
-    .filter((event) => {
-      const dateOk =
-        isToday(parseISO(event.start)) || isFuture(parseISO(event.start))
+    .filter(event => {
+      const eventStart = parseISO(event.start) // TODO parse date ONCE
+      const dateOk = isToday(eventStart) || isFuture(eventStart)
 
       if (searchString) {
         const lowerCasedSearchString = searchString.toLowerCase()
@@ -25,7 +26,7 @@ export const groupAndFilter = (
 
       return dateOk
     })
-    .map((event) => {
+    .map(event => {
       const eventStart = parseISO(event.start)
       const eventDate = formatInTimeZone(
         eventStart,
@@ -38,20 +39,21 @@ export const groupAndFilter = (
       eventsByDate[eventDate].push(event)
     })
 
-  return Object.entries(eventsByDate).sort(([date1], [date2]) =>
-    compareAsc(parseISO(date1), parseISO(date2))
-  )
+  return Object.entries(eventsByDate)
+    .sort(([date1], [date2]) => compareAsc(parseISO(date1), parseISO(date2)))
+    .slice(0, limit)
 }
 
-export const useGroupedEvents = (searchString: string | null | undefined) => {
-  const { events, isValidating } = useEvents()
+export const useGroupedEvents = (
+  limit: number,
+  searchString: string | null | undefined
+) => {
+  const { events, isValidating, error } = useEvents()
 
-  const eventsByDate = useMemo(() => {
-    if (events) {
-      return groupAndFilter(events, searchString)
-    }
-    return []
-  }, [events, searchString])
+  const eventsByDate = useMemo(
+    () => (events ? groupAndFilter(events, limit, searchString) : []),
+    [events, searchString, limit]
+  )
 
-  return { events: eventsByDate, isValidating }
+  return { events: eventsByDate, isValidating, error }
 }

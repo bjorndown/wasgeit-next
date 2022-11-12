@@ -27,17 +27,17 @@ describe('groupAndFilter', () => {
       { venue: 'fancy', title: 'good stuff', start: '2022-10-01', url: 'url' },
     ]
 
-    const grouped = groupAndFilter(events, undefined)
+    const grouped = groupAndFilter(events, 20, undefined)
 
     expect(grouped).toStrictEqual([])
   })
   it('must group of events by date', () => {
-    const grouped = groupAndFilter(events, undefined)
+    const grouped = groupAndFilter(events, 20, undefined)
 
     expect(grouped).toStrictEqual([[date, events]])
   })
   it('must filter out events not containing searchString', () => {
-    const grouped = groupAndFilter(events, 'ALSO')
+    const grouped = groupAndFilter(events, 20, 'ALSO')
 
     expect(grouped).toStrictEqual([[date, [events[1]]]])
   })
