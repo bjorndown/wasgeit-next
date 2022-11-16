@@ -21,7 +21,13 @@ function MyApp({ Component, pageProps }) {
         />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <link rel="icon" type="image/png" href="/favicon.png" />
-        <link rel="preload" crossOrigin="anonymous" href={EVENTS_JSON_URL} />
+        <link
+          rel="preload"
+          crossOrigin="anonymous"
+          as="fetch"
+          type="application/json"
+          href={EVENTS_JSON_URL}
+        />
         <title>wasgeit</title>
       </Head>
       <SWRConfig value={{ fetcher }}>
