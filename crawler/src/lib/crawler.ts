@@ -2,7 +2,7 @@ import {
   endOfDay,
   getYear,
   isBefore,
-  isPast,
+  isFuture,
   parse,
   parseISO,
   setHours,
@@ -50,7 +50,17 @@ export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
         eventsPerCrawler[crawler.name] = postProcess(
           eventsWithVenue,
           crawler
-        ).filter(event => !isPast(parseISO(event.start)))
+        ).filter(event => {
+          const yetToHappen = isFuture(parseISO(event.start))
+          if (!yetToHappen) {
+            logger.log({
+              level: 'warn',
+              message: 'skipping because in the past',
+              event,
+            })
+          }
+          return yetToHappen
+        })
       } catch (error: any) {
         logger.error({
           level: 'error',
@@ -86,7 +96,11 @@ const postProcess = (events: RawEvent[], crawler: Crawler): Event[] => {
         !_.isEmpty(event.title) &&
         !_.isEmpty(event.url)
       if (!included) {
-        logger.log({ level: 'warn', message: 'excluding', event })
+        logger.log({
+          level: 'warn',
+          message: 'excluding because incomplete',
+          event,
+        })
       }
       return included
     })
@@ -109,6 +123,7 @@ export const processDate = (
   previousDate: Date | undefined
 ): Event => {
   const [eventDateString, formatString] = crawler.prepareDate(event.start)
+  const dateContainsYear = formatString.includes('yy')
   try {
     const referenceTime = endOfDay(new Date())
     let eventDateLocal =
@@ -125,7 +140,11 @@ export const processDate = (
       eventDateLocal = setHours(eventDateLocal, 20)
     }
 
-    if (previousDate && isBefore(eventDateLocal, previousDate)) {
+    if (
+      previousDate &&
+      isBefore(eventDateLocal, previousDate) &&
+      !dateContainsYear
+    ) {
       logger.log({
         level: 'warn',
         message: 'moving to next year',

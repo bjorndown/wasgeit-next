@@ -7,14 +7,12 @@ export const crawler: Crawler = {
   city: 'Bern',
   providesTime: true,
   crawl: async (page: Page) => {
-    const elements = await page.query('.page-rossli-events .event a')
+    const elements = await page.query('div.event > a')
 
     return Promise.all(
-      elements.map(async (element) => {
+      elements.map(async element => {
         const [start, title, url] = await Promise.all([
-          element
-            .query('time.event-date')
-            .then((element) => element?.getAttribute('datetime')),
+          element.childText('time.event-date'),
           element.childText('h2'),
           element.getAttribute('href'),
         ])
@@ -23,7 +21,7 @@ export const crawler: Crawler = {
     )
   },
   prepareDate: (date: string) => {
-    const cleaned = date.slice(4, 21)
-    return [cleaned, 'dd. MMMM yyyy HH:mm']
+    const cleaned = date.slice(4, 16).replace('Mrz', 'Mär')
+    return [cleaned, 'dd. MMMM yyyy']
   },
 }
