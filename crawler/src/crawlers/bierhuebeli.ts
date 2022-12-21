@@ -6,16 +6,16 @@ export const crawler: Crawler = {
   url: 'https://bierhuebeli.ch',
   city: 'Bern',
   crawl: async (page: Page) => {
-    const elements = await page.query('.w-grid-item-h')
+    const elements = await page.query('article.event.size_1x1')
 
     return Promise.all(
-      elements.map(async (element) => {
+      elements.map(async element => {
         const [start, title, url] = await Promise.all([
           element.childText('.event_date'),
           element.childText('.event_titles'),
           element
             .query('.w-grid-item-anchor')
-            .then((element) => element?.getAttribute('href')),
+            .then(element => element?.getAttribute('href')),
         ])
         return { start, title, url }
       })
