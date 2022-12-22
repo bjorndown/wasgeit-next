@@ -2,8 +2,8 @@
   "compilerOptions": {
     "incremental": true,
     "target": "esnext",
-    "outDir": ".build",
-    "module": "CommonJS",
+    "noEmit": true,
+    "module": "ESNext",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
