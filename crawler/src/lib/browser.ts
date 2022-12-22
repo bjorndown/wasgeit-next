@@ -103,7 +103,7 @@ export class Element {
     return element
       ? element.evaluate(
           element =>
-            element.textContent
+            (element as HTMLElement).innerText
               ?.trim() // cannot extract into method because scope is not available in remote browser
               .replaceAll(/[\n\t]+/g, ' ')
               .replaceAll(/ {2,}/g, ' ')
