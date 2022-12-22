@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv'
+dotenv.config()
+
 import { logger } from './lib/logging'
 import { Crawler, runCrawlers } from './lib/crawler'
 import path from 'path'
