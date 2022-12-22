@@ -14,6 +14,7 @@ import { openBrowser, Page } from './browser'
 import { Event } from '@wasgeit/common/src/types'
 import { de } from 'date-fns/locale'
 import { zonedTimeToUtc } from 'date-fns-tz'
+import { notifySlack } from './slack'
 
 export type RawEvent = {
   url?: string
@@ -42,31 +43,38 @@ export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
         logger.log({ level: 'info', message: `crawling ${crawler.name}` })
         const page = await browser.openPage(crawler)
         const rawEvents = await crawler.crawl(page)
+
         const eventsWithVenue = rawEvents.map(rawEvent => ({
           ...rawEvent,
           venue: `${crawler.name}, ${crawler.city}`,
         }))
 
-        eventsPerCrawler[crawler.name] = postProcess(
-          eventsWithVenue,
-          crawler
-        ).filter(event => {
-          const yetToHappen = isFuture(parseISO(event.start))
-          if (!yetToHappen) {
-            logger.log({
-              level: 'warn',
-              message: 'skipping because in the past',
-              event,
-            })
+        const eventsProcessed = postProcess(eventsWithVenue, crawler).filter(
+          event => {
+            const yetToHappen = isFuture(parseISO(event.start))
+            if (!yetToHappen) {
+              logger.log({
+                level: 'warn',
+                message: 'skipping because in the past',
+                event,
+              })
+            }
+            return yetToHappen
           }
-          return yetToHappen
-        })
+        )
+
+        if (eventsProcessed.length === 0) {
+          await notifySlack(`crawler '${crawler.name}' returned 0 events`)
+        }
+
+        eventsPerCrawler[crawler.name] = eventsProcessed
       } catch (error: any) {
         logger.error({
           level: 'error',
           message: 'error during crawling',
           error: error.toString(),
         })
+        await notifySlack(`crawler ${crawler.name} failed: ${error}`)
       }
     })
   )
