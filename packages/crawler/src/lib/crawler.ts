@@ -51,9 +51,7 @@ export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
 
         const eventsProcessed = postProcess(eventsWithVenue, crawler)
 
-        if (eventsProcessed.length === 0) {
-          await notifySlack(`crawler '${crawler.name}' returned 0 events`)
-        }
+        await notifySlack(`crawler '${crawler.name}' returned ${eventsProcessed.length} events`)
 
         eventsPerCrawler[crawler.name] = eventsProcessed
       } catch (error: any) {
