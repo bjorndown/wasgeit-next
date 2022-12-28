@@ -9,7 +9,6 @@ export const crawler: Crawler = {
   city: 'Langenthal',
   crawl: async (page: Page) => {
     const elements = await page.query('.event-info')
-
     return Promise.all(
       elements.map(async element => {
         const [start, title, url] = await Promise.all([
@@ -25,4 +24,5 @@ export const crawler: Crawler = {
     const cleaned = date.slice(2).trim()
     return [cleaned, 'dd.MM.']
   },
+  waitMsBeforeCrawl: 1_000,
 }
