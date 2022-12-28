@@ -19,6 +19,7 @@ import { crawler as kairo } from './kairo'
 import { crawler as marta } from './marta'
 import { crawler as xtra } from './x-tra'
 import { crawler as lacapella } from './lacapella'
+import { crawler as heiterefahne } from './heiterefahne'
 
 export default [
   bierhuebeli,
@@ -42,4 +43,5 @@ export default [
   marta,
   xtra,
   lacapella,
+  heiterefahne
 ]
