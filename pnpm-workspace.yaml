@@ -1,4 +1,2 @@
 packages:
-  - common
-  - crawler
-  - frontend
+  - 'packages/**'

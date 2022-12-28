@@ -7,10 +7,10 @@ ADD . .
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-RUN pnpm install && cd crawler && pnpm run compile && pnpm run test && pnpm run build
+RUN pnpm install && cd packages/crawler && pnpm run compile && pnpm run test && pnpm run build
 
 FROM node:${IMAGE_VER} as runtime
 
-COPY --from=build /opt/wasgeit/crawler/dist/index.js .
+COPY --from=build /opt/wasgeit/packages/crawler/dist/index.js .
 
 CMD ["node", "index.js"]

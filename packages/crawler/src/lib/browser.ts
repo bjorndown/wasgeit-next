@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer-core'
+import * as puppeteer from 'puppeteer-core'
 
 export const openBrowser = async (): Promise<Browser> => {
   const browser = await startPuppeteer()

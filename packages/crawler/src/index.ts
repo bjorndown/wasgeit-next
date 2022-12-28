@@ -4,7 +4,7 @@ import { uploadFile } from './lib/upload'
 import { logger } from './lib/logging'
 import { notifySlack } from './lib/slack'
 
-export const crawlVenues = async () => {
+export const main = async () => {
   const events = await runCrawlers(crawlers)
   logger.info('venues crawled')
 
@@ -19,3 +19,5 @@ export const crawlVenues = async () => {
 
   logger.info('events uploaded')
 }
+
+main()

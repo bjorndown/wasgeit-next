@@ -1,6 +1,11 @@
 import { Event } from '@wasgeit/common/src/types'
 import { Crawler, processDate } from './crawler'
 
+jest.mock('./slack', () => {
+  notifySlack: jest.fn()
+})
+
+
 const now = new Date('2022-10-02 10:01:02')
 beforeAll(() => {
   jest.useFakeTimers({ now: now })
