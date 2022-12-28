@@ -2,11 +2,11 @@ import {
   endOfDay,
   getYear,
   isBefore,
-  isFuture,
   parse,
   parseISO,
   setHours,
   setYear,
+  startOfDay,
 } from 'date-fns'
 import _ from 'lodash'
 import { logger } from './logging'
@@ -49,19 +49,7 @@ export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
           venue: `${crawler.name}, ${crawler.city}`,
         }))
 
-        const eventsProcessed = postProcess(eventsWithVenue, crawler).filter(
-          event => {
-            const yetToHappen = isFuture(parseISO(event.start))
-            if (!yetToHappen) {
-              logger.log({
-                level: 'warn',
-                message: 'skipping because in the past',
-                event,
-              })
-            }
-            return yetToHappen
-          }
-        )
+        const eventsProcessed = postProcess(eventsWithVenue, crawler)
 
         if (eventsProcessed.length === 0) {
           await notifySlack(`crawler '${crawler.name}' returned 0 events`)
@@ -95,7 +83,7 @@ const postProcess = (events: RawEvent[], crawler: Crawler): Event[] => {
   // Solution: Assume venues list their events chronologically. Keep track of last event's date.
   // If an event's date is older than that date the event must be from next year. Then we set the year
   // accordingly.
-  let previousDate: Date
+  let previousDate = startOfDay(new Date())
 
   return events
     .filter(event => {
