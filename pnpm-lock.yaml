@@ -3,7 +3,10 @@ lockfileVersion: 5.4
 importers:
 
   .:
-    specifiers: {}
+    specifiers:
+      prettier: 2.5.1
+    devDependencies:
+      prettier: 2.5.1
 
   packages/common:
     specifiers: {}

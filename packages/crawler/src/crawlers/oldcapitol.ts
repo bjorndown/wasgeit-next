@@ -8,21 +8,21 @@ export const crawler: Crawler = {
   url: `${BASE_URL}/events`,
   city: 'Langenthal',
   crawl: async (page: Page) => {
-    const elements = await page.query('.event')
+    const elements = await page.query('.event-info')
 
     return Promise.all(
-      elements.map(async (element) => {
+      elements.map(async element => {
         const [start, title, url] = await Promise.all([
           element.childText('.event-date'),
           element.childText('div:nth-child(2) > h4.mb-0'),
-          element.getAttribute('href').then((path) => `${BASE_URL}${path}`),
+          element.getAttribute('href').then(path => `${BASE_URL}${path}`),
         ])
         return { start, title, url }
       })
     )
   },
   prepareDate: (date: string) => {
-    const cleaned = date.slice(2)
+    const cleaned = date.slice(2).trim()
     return [cleaned, 'dd.MM.']
   },
 }
