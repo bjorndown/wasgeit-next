@@ -1,26 +1,31 @@
-import { Page } from '../lib/browser'
-import { Crawler } from '../lib/crawler'
+import { Crawler, register } from '../lib/crawler'
+import { Element, Page } from '../lib/browser'
 
-export const crawler: Crawler = {
-  name: 'Mokka',
-  url: 'https://mokka.ch',
-  city: 'Thun',
-  crawl: async (page: Page) => {
-    const elements = await page.query('a.shows')
+class Mokka extends Crawler {
+  public name = 'Mokka'
+  public url = 'https://mokka.ch'
+  public city = 'Thun'
+  dateFormat = 'dd. MMM'
 
-    return Promise.all(
-      elements.map(async (element) => {
-        const [start, title, url] = await Promise.all([
-          element.childText('.date'),
-          element.childText('.title-section'),
-          element.getAttribute('href'),
-        ])
-        return { start, title, url }
-      })
-    )
-  },
-  prepareDate: (date: string) => {
-    const cleaned = date.slice(4, 11)
-    return [cleaned, 'dd. MMM']
-  },
+  async getEventElements(page: Page) {
+    return page.query('a.shows')
+  }
+
+  async getTitle(element: Element) {
+    return element.childText('.title-section')
+  }
+
+  async getStart(element: Element) {
+    return element.childText('.date')
+  }
+
+  async getUrl(element: Element) {
+    return element.getAttribute('href')
+  }
+
+  prepareDate(date: string) {
+    return date.slice(4, 11)
+  }
 }
+
+register(new Mokka())

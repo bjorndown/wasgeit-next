@@ -1,25 +1,27 @@
-import { Page } from '../lib/browser'
-import { Crawler } from '../lib/crawler'
+import { Page, Element } from '../lib/browser'
+import { Crawler, register } from '../lib/crawler'
 
-export const crawler: Crawler = {
-  name: 'ISC',
-  url: 'https://www.isc-club.ch',
-  city: 'Bern',
-  crawl: async (page: Page) => {
-    const elements = await page.query('.event_preview')
+class Isc extends Crawler {
+  name = 'ISC'
+  url = 'https://www.isc-club.ch'
+  city = 'Bern'
+  dateFormat = 'dd.MM.'
 
-    return Promise.all(
-      elements.map(async (element) => {
-        const [start, title, url] = await Promise.all([
-          element.childText('.event_title_date'),
-          element.childText('.event_title_title'),
-          element.getAttribute('href'),
-        ])
-        return { start, title, url }
-      })
-    )
-  },
-  prepareDate: (date: string) => {
-    return [date, 'dd.MM.']
-  },
+  getEventElements(page: Page): Promise<Element[]> {
+    return page.query('.event_preview')
+  }
+
+  getStart(element: Element): Promise<string | undefined> {
+    return element.childText('.event_title_date')
+  }
+
+  getTitle(element: Element): Promise<string | undefined> {
+    return element.childText('.event_title_title')
+  }
+
+  getUrl(element: Element): Promise<string | undefined> {
+    return element.getAttribute('href')
+  }
 }
+
+register(new Isc())

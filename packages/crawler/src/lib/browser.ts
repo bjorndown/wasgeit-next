@@ -29,7 +29,6 @@ export class Browser {
     waitMsBeforeCrawl,
   }: OpenPageArgs): Promise<Page> {
     const page = await this.browser.newPage()
-
     await page.goto(url)
 
     if (onLoad) {

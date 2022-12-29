@@ -1,27 +1,31 @@
-import { Page } from '../lib/browser'
-import { Crawler } from '../lib/crawler'
+import { Page, Element } from '../lib/browser'
+import { Crawler, register } from '../lib/crawler'
 
-const URL = 'https://www.cafe-kairo.ch/kultur'
+class Kairo extends Crawler {
+  name = 'Kairo'
+  url = 'https://www.cafe-kairo.ch/kultur'
+  city = 'Bern'
+  dateFormat = 'EEE dd.MM.yyyy'
 
-export const crawler: Crawler = {
-  name: 'Kairo',
-  url: URL,
-  city: 'Bern',
-  crawl: async (page: Page) => {
-    const elements = await page.query('article[id]')
+  prepareDate(date: string) {
+    return date.slice(0, 13)
+  }
 
-    return Promise.all(
-      elements.map(async element => {
-        const [start, title, url] = await Promise.all([
-          element.childText('p'),
-          element.childText('h1'),
-          element.getAttribute('id').then(id => `${URL}/#${id}`),
-        ])
-        return { start, title, url }
-      })
-    )
-  },
-  prepareDate: (date: string) => {
-    return [date.slice(0, 13), 'EEE dd.MM.yyyy']
-  },
+  getEventElements(page: Page): Promise<Element[]> {
+    return page.query('article[id]')
+  }
+
+  getStart(element: Element): Promise<string | undefined> {
+    return element.childText('p')
+  }
+
+  getTitle(element: Element): Promise<string | undefined> {
+    return element.childText('h1')
+  }
+
+  getUrl(element: Element): Promise<string | undefined> {
+    return element.getAttribute('id').then(id => `${this.url}/#${id}`)
+  }
 }
+
+register(new Kairo())

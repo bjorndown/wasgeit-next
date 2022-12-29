@@ -1,11 +1,10 @@
-import { runCrawlers } from './lib/crawler'
-import crawlers from './crawlers'
+import { getCrawlers, runCrawlers } from './lib/crawler'
 import { uploadFile } from './lib/upload'
 import { logger } from './lib/logging'
 import { notifySlack } from './lib/slack'
 
 export const main = async () => {
-  const events = await runCrawlers(crawlers)
+  const events = await runCrawlers(getCrawlers())
   logger.info('venues crawled')
 
   if (events.length === 0) {

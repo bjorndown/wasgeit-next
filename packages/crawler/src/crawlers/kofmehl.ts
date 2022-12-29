@@ -1,27 +1,32 @@
-import { Page } from '../lib/browser'
-import { Crawler } from '../lib/crawler'
+import { Page, Element } from '../lib/browser'
+import { Crawler, register } from '../lib/crawler'
 
-export const crawler: Crawler = {
-  name: 'Kofmehl',
-  url: 'https://kofmehl.net/',
-  city: 'Solothurn',
-  crawl: async (page: Page) => {
-    const elements = await page.query('.events__link')
+class Kofmehl extends Crawler {
+  name = 'Kofmehl'
+  url = 'https://kofmehl.net/'
+  city = 'Solothurn'
+  dateFormat = 'dd.MM'
 
-    return Promise.all(
-      elements.map(async (element) => {
-        const [start, title, url] = await Promise.all([
-          element.childText('.events__date'),
-          element
-            .childText('.events__title'),
-          element.getAttribute('href'),
-        ])
-        return { start, title, url }
-      })
-    )
-  },
-  prepareDate: (date: string) => {
-    const cleaned = date.slice(3, 11)
-    return [cleaned, 'dd.MM']
-  },
+  prepareDate(date: string) {
+    return date.slice(3, 11)
+  }
+
+  getEventElements(page: Page): Promise<Element[]> {
+    return page.query('.events__link')
+  }
+
+  getTitle(element: Element): Promise<string | undefined> {
+    return element.childText('.events__title')
+  }
+
+  getStart(element: Element): Promise<string | undefined> {
+    return element.childText('.events__date')
+
+  }
+
+  getUrl(element: Element): Promise<string | undefined> {
+    return element.getAttribute('href')
+  }
 }
+
+register(new Kofmehl())

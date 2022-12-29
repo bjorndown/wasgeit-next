@@ -1,30 +1,34 @@
-import { Page } from '../lib/browser'
-import { Crawler } from '../lib/crawler'
+import { Page, Element } from '../lib/browser'
+import { Crawler, register } from '../lib/crawler'
 
-export const crawler: Crawler = {
-  name: 'Schüür',
-  url: 'https://www.schuur.ch/programm',
-  city: 'Luzern',
-  providesTime: true,
-  crawl: async (page: Page) => {
-    const elements = await page.query('.event-list-box')
+class Schueuer extends Crawler {
+  name = 'Schüür'
+  url = 'https://www.schuur.ch/programm'
+  city = 'Luzern'
 
-    return Promise.all(
-      elements.map(async (element) => {
-        const [start, title, url] = await Promise.all([
-          element
-            .query('meta[itemprop="startDate"]')
-            .then((element) => element?.getAttribute('content')),
-          element.childText('.event-name'),
-          element
-            .query('.event-box-details-link')
-            .then((element) => element?.getAttribute('href')),
-        ])
-        return { start, title, url }
-      })
-    )
-  },
-  prepareDate: (date: string) => {
-    return [date, 'ISO']
-  },
+  prepareDate(date: string) {
+    return date
+  }
+
+  getEventElements(page: Page) {
+    return page.query('.event-list-box')
+  }
+
+  getStart(element: Element) {
+    return element
+      .query('meta[itemprop="startDate"]')
+      .then(element => element?.getAttribute('content'))
+  }
+
+  getTitle(element: Element) {
+    return element.childText('.event-name')
+  }
+
+  getUrl(element: Element) {
+    return element
+      .query('.event-box-details-link')
+      .then(element => element?.getAttribute('href'))
+  }
 }
+
+register(new Schueuer())

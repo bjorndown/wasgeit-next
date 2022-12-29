@@ -1,34 +1,37 @@
-import { Page } from '../lib/browser'
-import { Crawler } from '../lib/crawler'
+import { Page, Element } from '../lib/browser'
+import { Crawler, register } from '../lib/crawler'
 
-const BASE_URL = 'https://www.dachstock.ch'
+class Dachstock extends Crawler {
+  BASE_URL = 'https://www.dachstock.ch'
+  name = 'Dachstock'
+  url = new URL('/events', this.BASE_URL).toString()
+  city = 'Bern'
+  dateFormat = 'dd.MM.yyyy - HH:mm'
+  waitMsBeforeCrawl = 400
 
-export const crawler: Crawler = {
-  name: 'Dachstock',
-  url: `${BASE_URL}/events`,
-  city: 'Bern',
-  providesTime: true,
-  crawl: async (page: Page) => {
-    const elements = await page.query('.event-list .event-teaser-info')
+  prepareDate(date: string) {
+    return date.slice(4, 22)
+  }
 
-    return Promise.all(
-      elements.map(async element => {
-        const start = await element.childText('.event-teaser-top a')
-        const titlePart = await element.childText('a .event-title')
-        const artists = await element.childText('a .artist-list')
-        const anchor = await element.query('a')
-        const href = await anchor?.getAttribute('href')
-        return {
-          start,
-          title: `${titlePart}${titlePart ? ': ' : ''}${artists}`,
-          url: `${BASE_URL}${href}`,
-        }
-      })
-    )
-  },
-  prepareDate: (date: string) => {
-    const cleaned = date.slice(4, 22)
-    return [cleaned, 'dd.MM.yyyy - HH:mm']
-  },
-  waitMsBeforeCrawl: 400,
+  getEventElements(page: Page): Promise<Element[]> {
+    return page.query('.event-list .event-teaser-info')
+  }
+
+  getStart(element: Element): Promise<string | undefined> {
+    return element.childText('.event-teaser-top a')
+  }
+
+  async getTitle(element: Element): Promise<string | undefined> {
+    const titlePart = await element.childText('a .event-title')
+    const artists = await element.childText('a .artist-list')
+    return `${titlePart}${titlePart ? ': ' : ''}${artists}`
+  }
+
+  async getUrl(element: Element): Promise<string | undefined> {
+    const anchor = await element.query('a')
+    const href = await anchor?.getAttribute('href')
+    return new URL(href ?? '', this.BASE_URL).toString()
+  }
 }
+
+register(new Dachstock())

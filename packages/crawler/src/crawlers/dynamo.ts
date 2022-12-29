@@ -1,31 +1,35 @@
-import { Page } from '../lib/browser'
-import { Crawler } from '../lib/crawler'
+import { Page, Element } from '../lib/browser'
+import { Crawler, register } from '../lib/crawler'
 
-const BASE_URL = 'https://www.dynamo.ch'
+class Dynamo extends Crawler {
+  BASE_URL = 'https://www.dynamo.ch'
+  name = 'Dynamo'
+  city = 'Zürich'
+  url = new URL('/veranstaltungen', this.BASE_URL).toString()
+  dateFormat = 'dd. MMMM yyyy'
 
-export const crawler: Crawler = {
-  name: 'Dynamo',
-  city: 'Zürich',
-  url: `${BASE_URL}/veranstaltungen`,
-  crawl: async (page: Page) => {
-    const elements = await page.query('.group-infos')
+  prepareDate(date: string) {
+    return date.split(',')[1].trim().split(' -')[0]
+  }
 
-    return Promise.all(
-      elements.map(async (element) => {
-        const [start, title, url] = await Promise.all([
-          element.childText('.field.field-name-field-event-zeitraum'),
-          element.childText('.field.field-name-title'),
-          element
-            .query('.field.field-name-title a')
-            .then((element) => element?.getAttribute('href'))
-            .then((path) => `${BASE_URL}${path}`),
-        ])
-        return { start, title, url }
-      })
-    )
-  },
-  prepareDate: (date: string) => {
-    const cleaned = date.split(',')[1].trim().split(' -')[0]
-    return [cleaned, 'dd. MMMM yyyy']
-  },
+  getEventElements(page: Page): Promise<Element[]> {
+    return page.query('.group-infos')
+  }
+
+  getStart(element: Element): Promise<string | undefined> {
+    return element.childText('.field.field-name-field-event-zeitraum')
+  }
+
+  getTitle(element: Element): Promise<string | undefined> {
+    return element.childText('.field.field-name-title')
+  }
+
+  getUrl(element: Element): Promise<string | undefined> {
+    return element
+      .query('.field.field-name-title a')
+      .then(element => element?.getAttribute('href'))
+      .then(path => new URL(path ?? '', this.BASE_URL).toString())
+  }
 }
+
+register(new Dynamo())

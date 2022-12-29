@@ -1,31 +1,34 @@
-import { Page } from '../lib/browser'
-import { Crawler } from '../lib/crawler'
+import { Page, Element } from '../lib/browser'
+import { Crawler, register } from '../lib/crawler'
 
-const BASE_URL = 'https://www.dieheiterefahne.ch'
+class Heiterefahne extends Crawler {
+  BASE_URL = 'https://www.dieheiterefahne.ch'
+  name = 'Heitere Fahne'
+  url = new URL('/events', this.BASE_URL).toString()
+  city = 'Bern'
+  dateFormat = 'dd.MM.yyyy'
+  waitMsBeforeCrawl = 400
 
-export const crawler: Crawler = {
-  name: 'Heitere Fahne',
-  url: `${BASE_URL}/events`,
-  city: 'Bern',
-  crawl: async (page: Page) => {
-    const elements = await page.query('.vb-content a')
+  prepareDate(date: string) {
+    return date.split(' ')[1].slice()
+  }
 
-    return Promise.all(
-      elements.map(async element => {
-        const start = await element.childText('.events__list-item-date')
-        const title = await element.childText('.events__list-item-title')
-        const href = await element.getAttribute('href')
-        return {
-          start,
-          title,
-          url: `${BASE_URL}${href}`,
-        }
-      })
-    )
-  },
-  prepareDate: (date: string) => {
-    const cleaned = date.split(' ')[1].slice()
-    return [cleaned, 'dd.MM.yyyy']
-  },
-  waitMsBeforeCrawl: 400,
+  getEventElements(page: Page): Promise<Element[]> {
+    return page.query('.vb-content a')
+  }
+
+  getStart(element: Element): Promise<string | undefined> {
+    return element.childText('.events__list-item-date')
+  }
+
+  getTitle(element: Element): Promise<string | undefined> {
+    return element.childText('.events__list-item-title')
+  }
+
+  async getUrl(element: Element): Promise<string | undefined> {
+    const href = await element.getAttribute('href')
+    return new URL(href, this.BASE_URL).toString()
+  }
 }
+
+register(new Heiterefahne())

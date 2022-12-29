@@ -1,26 +1,31 @@
-import { Page } from '../lib/browser'
-import { Crawler } from '../lib/crawler'
+import { Page, Element } from '../lib/browser'
+import { Crawler, register } from '../lib/crawler'
 
-export const crawler: Crawler = {
-  name: 'Docks',
-  url: 'https://www.docks.ch/programme/',
-  city: 'Lausanne',
-  crawl: async (page: Page) => {
-    const elements = await page.query('.concerts > a')
+class Docks extends Crawler {
+  name = 'Docks'
+  url = 'https://www.docks.ch/programme/'
+  city = 'Lausanne'
+  dateFormat = 'dd.MM.yyyy'
 
-    return Promise.all(
-      elements.map(async (element) => {
-        const [start, title, url] = await Promise.all([
-          element.childText('.programme-item-date'),
-          element.childText('.event-item-title.programme-item-title'),
-          element.getAttribute('href'),
-        ])
-        return { start, title, url }
-      })
-    )
-  },
-  prepareDate: (date: string) => {
-    const cleaned = date.slice(0, 10)
-    return [cleaned, 'dd.MM.yyyy']
-  },
+  prepareDate(date: string) {
+    return date.slice(0, 10)
+  }
+
+  getEventElements(page: Page): Promise<Element[]> {
+    return page.query('.concerts > a')
+  }
+
+  getStart(element: Element): Promise<string | undefined> {
+    return element.childText('.programme-item-date')
+  }
+
+  getTitle(element: Element): Promise<string | undefined> {
+    return element.childText('.event-item-title.programme-item-title')
+  }
+
+  getUrl(element: Element): Promise<string | undefined> {
+    return element.getAttribute('href')
+  }
 }
+
+register(new Docks())

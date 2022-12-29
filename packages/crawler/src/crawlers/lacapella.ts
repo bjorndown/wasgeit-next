@@ -1,15 +1,15 @@
-import { Page } from '../lib/browser'
-import { Crawler } from '../lib/crawler'
+import { Element, Page } from '../lib/browser'
+import { Crawler, register } from '../lib/crawler'
 
-const BASE_URL = 'https://www.la-cappella.ch'
+class Lacapella extends Crawler {
+  BASE_URL = 'https://www.la-cappella.ch'
+  name = 'La Cappella'
+  url = new URL('de/spielplan-4.html', this.BASE_URL).toString()
+  city = 'Bern'
+  dateFormat = "dd. MMMM yyyy HH:mm 'Uhr'"
 
-export const crawler: Crawler = {
-  name: 'La Cappella',
-  url: new URL('de/spielplan-4.html', BASE_URL).toString(),
-  city: 'Bern',
-  providesTime: true,
-  crawl: async (page: Page) => {
-    const monthGroups = await page.query('.eventlist__group')
+  async crawl(page: Page) {
+    const monthGroups = await this.getEventElements(page)
 
     const eventsPerMonth = await Promise.all(
       monthGroups.map(async monthGroup => {
@@ -23,7 +23,7 @@ export const crawler: Crawler = {
             const title = await element.childText('.lc-event__text')
             const anchor = await element.query('.lc-event__text')
             const href = await anchor?.getAttribute('href')
-            const url = new URL(href ?? '', BASE_URL).toString()
+            const url = new URL(href ?? '', this.BASE_URL).toString()
 
             return { start: `${date} ${monthYear} ${time}`, title, url }
           })
@@ -31,9 +31,29 @@ export const crawler: Crawler = {
       })
     )
 
-    return eventsPerMonth.flat()
-  },
-  prepareDate: (date: string) => {
-    return [date, "dd. MMMM yyyy HH:mm 'Uhr'"]
-  },
+    const eventsWithVenue = eventsPerMonth.flat().map(rawEvent => ({
+      ...rawEvent,
+      venue: `${this.name}, ${this.city}`,
+    }))
+
+    return this.postProcess(eventsWithVenue)
+  }
+
+  getEventElements(page: Page) {
+    return page.query('.eventlist__group')
+  }
+
+  getStart(element: Element) {
+    return Promise.resolve('')
+  }
+
+  getTitle(element: Element) {
+    return Promise.resolve('')
+  }
+
+  getUrl(element: Element) {
+    return Promise.resolve('')
+  }
 }
+
+register(new Lacapella())

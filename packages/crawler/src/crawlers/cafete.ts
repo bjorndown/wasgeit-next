@@ -1,31 +1,33 @@
-import { Page } from '../lib/browser'
-import { Crawler } from '../lib/crawler'
+import { Page, Element } from '../lib/browser'
+import { Crawler, register } from '../lib/crawler'
 
-const URL = 'https://cafete.ch/'
+class Cafete extends Crawler {
+  name = 'Cafete'
+  url = 'https://cafete.ch/'
+  city = 'Bern'
+  dateFormat = "dd. MMMM yyyy HH'h'mm"
 
-export const crawler: Crawler = {
-  name: 'Cafete',
-  url: URL,
-  city: 'Bern',
-  crawl: async (page: Page) => {
-    const elements = await page.query('.event')
+  prepareDate(date: string) {
+    return date.replace(' — Doors:', '').slice(3, 25)
+  }
 
-    return Promise.all(
-      elements.map(async (element) => {
-        const [start, title, url] = await Promise.all([
-          element.childText('.date'),
-          Promise.all([
-            element.childText('.title'),
-            element.childText('.acts'),
-          ]).then(([title, acts]) => `${title} ${acts}`),
-          URL,
-        ])
-        return { start, title, url }
-      })
-    )
-  },
-  prepareDate: (date: string) => {
-    const cleaned = date.replace(' — Doors:', '').slice(3, 25)
-    return [cleaned, "dd. MMMM yyyy HH'h'mm"]
-  },
+  getEventElements(page: Page): Promise<Element[]> {
+    return page.query('.event')
+  }
+
+  getStart(element: Element): Promise<string | undefined> {
+    return element.childText('.date')
+  }
+
+  async getTitle(element: Element): Promise<string | undefined> {
+    const title = await element.childText('.title')
+    const acts = await element.childText('.acts')
+    return `${title} ${acts}`
+  }
+
+  async getUrl(element: Element): Promise<string | undefined> {
+    return this.url
+  }
 }
+
+register(new Cafete())

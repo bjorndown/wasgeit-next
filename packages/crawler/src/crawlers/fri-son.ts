@@ -1,32 +1,35 @@
-import { Page } from '../lib/browser'
-import { Crawler } from '../lib/crawler'
+import { Page, Element } from '../lib/browser'
+import { Crawler, register } from '../lib/crawler'
 
-const BASE_URL = 'https://fri-son.ch'
+class FriSon extends Crawler {
+  BASE_URL = 'https://fri-son.ch'
+  name = 'Fri-Son'
+  url = new URL('/de/programm', this.BASE_URL).toString()
+  city = 'Fribourg'
 
-export const crawler: Crawler = {
-  name: 'Fri-Son',
-  url: `${BASE_URL}/de/programm`,
-  city: 'Fribourg',
-  crawl: async (page: Page) => {
-    const elements = await page.query('.node.node-event')
+  getEventElements(page: Page): Promise<Element[]> {
+    return page.query('.node.node-event')
+  }
 
-    return Promise.all(
-      elements.map(async (element) => {
-        const [start, title, url] = await Promise.all([
-          element
-            .query('.date-display-single')
-            .then((el) => el?.getAttribute('content')),
-          element.childText('.field.field-name-field-event-artists'),
-          element.getAttribute('about').then((attr) => `${BASE_URL}${attr}`),
-        ])
-        return { start, title, url }
-      })
-    )
-  },
-  prepareDate: (date: string) => {
-    return [date, 'ISO']
-  },
-  onLoad: () => {
+  getStart(element: Element): Promise<string | undefined> {
+    return element
+      .query('.date-display-single')
+      .then(el => el?.getAttribute('content'))
+  }
+
+  getTitle(element: Element): Promise<string | undefined> {
+    return element.childText('.field.field-name-field-event-artists')
+  }
+
+  getUrl(element: Element): Promise<string | undefined> {
+    return element
+      .getAttribute('about')
+      .then(attr => new URL(attr, this.BASE_URL).toString())
+  }
+
+  onLoad() {
     document.querySelector('.block.block-block.last.odd')?.scrollIntoView()
-  },
+  }
 }
+
+register(new FriSon())
