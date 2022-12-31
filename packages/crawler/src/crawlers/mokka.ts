@@ -2,7 +2,8 @@ import { Crawler, register } from '../lib/crawler'
 import { Element, Page } from '../lib/browser'
 
 class Mokka extends Crawler {
-  public name = 'Mokka'
+  key = 'mokka'
+  public title = 'Mokka'
   public url = 'https://mokka.ch'
   public city = 'Thun'
   dateFormat = 'dd. MMM'

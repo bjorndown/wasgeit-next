@@ -2,8 +2,9 @@ import { Element, Page } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Lacapella extends Crawler {
+  key = 'lacapella'
   BASE_URL = 'https://www.la-cappella.ch'
-  name = 'La Cappella'
+  title = 'La Cappella'
   url = new URL('de/spielplan-4.html', this.BASE_URL).toString()
   city = 'Bern'
   dateFormat = "dd. MMMM yyyy HH:mm 'Uhr'"
@@ -33,7 +34,7 @@ class Lacapella extends Crawler {
 
     const eventsWithVenue = eventsPerMonth.flat().map(rawEvent => ({
       ...rawEvent,
-      venue: `${this.name}, ${this.city}`,
+      venue: `${this.title}, ${this.city}`,
     }))
 
     return this.postProcess(eventsWithVenue)

@@ -4,7 +4,8 @@ import { Crawler, register } from '../lib/crawler'
 const BASE_URL = 'https://x-tra.ch/'
 
 class XTra extends Crawler {
-  name = 'X-TRA'
+  key = 'xtra'
+  title = 'X-TRA'
   url = new URL('/en/agenda/concerts/', BASE_URL).toString()
   city = 'Zürich'
   dateFormat = 'dd.MM.yy'

@@ -23,7 +23,8 @@ export type RawEvent = {
 }
 
 export abstract class Crawler {
-  public abstract name: string
+  public abstract key: string
+  public abstract title: string
   public abstract url: string
   public abstract city: string
   public dateFormat = 'ISO'
@@ -42,7 +43,7 @@ export abstract class Crawler {
 
     const eventsWithVenue = rawEvents.map(rawEvent => ({
       ...rawEvent,
-      venue: `${this.name}, ${this.city}`,
+      venue: `${this.title}, ${this.city}`,
     }))
 
     return this.postProcess(eventsWithVenue)
@@ -172,12 +173,12 @@ export const runCrawlers = async (crawlers: Crawler[]): Promise<Event[]> => {
 
 const crawl = async (crawler: Crawler, browser: Browser) => {
   try {
-    logger.log({ level: 'info', message: `crawling ${crawler.name}` })
+    logger.log({ level: 'info', message: `crawling ${crawler.title}` })
     const page = await browser.openPage(crawler)
     const events = await crawler.crawl(page)
 
     await notifySlack(
-      `crawler '${crawler.name}' returned ${events.length} events`
+      `crawler '${crawler.title}' returned ${events.length} events`
     )
 
     return events
@@ -188,14 +189,14 @@ const crawl = async (crawler: Crawler, browser: Browser) => {
       error: error.toString(),
       stacktrace: error.stacktrace,
     })
-    await notifySlack(`crawler ${crawler.name} failed: ${error}`)
+    await notifySlack(`crawler ${crawler.title} failed: ${error}`)
     return []
   }
 }
 
 const crawlers: { [key: string]: Crawler } = {}
 
-export const register = (crawler: Crawler) => (crawlers[crawler.name] = crawler)
+export const register = (crawler: Crawler) => (crawlers[crawler.key] = crawler)
 export const getCrawlers = () => Object.values(crawlers)
 export const getCrawler = (name: string) => {
   if (!(name in crawlers)) {

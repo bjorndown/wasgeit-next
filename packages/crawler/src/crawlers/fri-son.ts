@@ -2,8 +2,9 @@ import { Page, Element } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class FriSon extends Crawler {
+  key = 'fri-son'
   BASE_URL = 'https://fri-son.ch'
-  name = 'Fri-Son'
+  title = 'Fri-Son'
   url = new URL('/de/programm', this.BASE_URL).toString()
   city = 'Fribourg'
 

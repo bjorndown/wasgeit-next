@@ -2,7 +2,8 @@ import { Page, Element } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Kofmehl extends Crawler {
-  name = 'Kofmehl'
+  key = 'kofmehl'
+  title = 'Kofmehl'
   url = 'https://kofmehl.net/'
   city = 'Solothurn'
   dateFormat = 'dd.MM'

@@ -2,8 +2,9 @@ import { Page, Element } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Heiterefahne extends Crawler {
+  key = 'heiterefahne'
   BASE_URL = 'https://www.dieheiterefahne.ch'
-  name = 'Heitere Fahne'
+  title = 'Heitere Fahne'
   url = new URL('/events', this.BASE_URL).toString()
   city = 'Bern'
   dateFormat = 'dd.MM.yyyy'

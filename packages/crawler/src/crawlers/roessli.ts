@@ -2,7 +2,8 @@ import { Element, Page } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Roessli extends Crawler {
-  name = 'Rössli'
+  key = 'roessli'
+  title = 'Rössli'
   url = 'https://www.souslepont-roessli.ch/events/'
   city = 'Bern'
   dateFormat = 'dd. MMMM yyyy'

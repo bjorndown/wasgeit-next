@@ -4,7 +4,8 @@ import { Crawler, register } from '../lib/crawler'
 const BASE_URL = 'https://oldcapitol.ch'
 
 class OldCapitol extends Crawler {
-  name = 'Old Capitol'
+  key = 'oldcapitol'
+  title = 'Old Capitol'
   url = `${BASE_URL}/events`
   city = 'Langenthal'
   dateFormat = 'dd.MM.'

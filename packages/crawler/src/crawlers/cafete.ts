@@ -2,7 +2,8 @@ import { Page, Element } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Cafete extends Crawler {
-  name = 'Cafete'
+  key = 'cafete'
+  title = 'Cafete'
   url = 'https://cafete.ch/'
   city = 'Bern'
   dateFormat = "dd. MMMM yyyy HH'h'mm"

@@ -2,7 +2,8 @@ import { Page, Element } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Bierhuebeli extends Crawler {
-  name = 'Bierhübeli'
+  key = 'bierhuebeli'
+  title = 'Bierhübeli'
   url = 'https://bierhuebeli.ch'
   city = 'Bern'
   dateFormat = 'dd.MM.yyyy'

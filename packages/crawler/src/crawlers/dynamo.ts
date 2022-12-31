@@ -2,8 +2,9 @@ import { Page, Element } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Dynamo extends Crawler {
+  key = 'dynamo'
   BASE_URL = 'https://www.dynamo.ch'
-  name = 'Dynamo'
+  title = 'Dynamo'
   city = 'Zürich'
   url = new URL('/veranstaltungen', this.BASE_URL).toString()
   dateFormat = 'dd. MMMM yyyy'

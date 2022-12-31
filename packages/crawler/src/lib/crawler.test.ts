@@ -16,8 +16,9 @@ afterAll(() => {
 })
 
 class TestCrawler extends Crawler {
+  key = 'test'
   city = ''
-  name = ''
+  title = 'Test'
   url = ''
 
   constructor(dateFormat: string) {

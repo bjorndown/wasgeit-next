@@ -25,6 +25,6 @@ import { getCrawlers } from '../lib/crawler'
 
 logger.info(
   `Registered ${getCrawlers().length} crawlers: ${getCrawlers()
-    .map(crawler => crawler.name)
+    .map(crawler => crawler.key)
     .join(', ')}`
 )

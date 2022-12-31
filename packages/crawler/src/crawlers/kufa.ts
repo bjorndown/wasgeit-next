@@ -2,7 +2,8 @@ import { Page, Element } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Kufa extends Crawler {
-  name = 'KUFA'
+  key = 'kufa'
+  title = 'KUFA'
   url = `https://www.kufa.ch`
   city = 'Lyss'
   dateFormat = 'dd.MM.yyyy'

@@ -2,7 +2,8 @@ import { Page, Element } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Isc extends Crawler {
-  name = 'ISC'
+  key = 'isc'
+  title = 'ISC'
   url = 'https://www.isc-club.ch'
   city = 'Bern'
   dateFormat = 'dd.MM.'

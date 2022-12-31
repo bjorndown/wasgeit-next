@@ -2,7 +2,8 @@ import { Element, Page } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Muehlehunziken extends Crawler {
-  name = 'Mühle Hunziken'
+  key = 'muehlehunziken'
+  title = 'Mühle Hunziken'
   url = 'https://muehlehunziken.ch/programm'
   city = 'Rubigen'
   dateFormat = 'd.M.'

@@ -2,7 +2,8 @@ import { Page, Element } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Docks extends Crawler {
-  name = 'Docks'
+  key = 'docks'
+  title = 'Docks'
   url = 'https://www.docks.ch/programme/'
   city = 'Lausanne'
   dateFormat = 'dd.MM.yyyy'

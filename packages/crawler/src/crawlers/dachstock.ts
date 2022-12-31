@@ -2,8 +2,9 @@ import { Page, Element } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Dachstock extends Crawler {
+  key = 'dachstock'
   BASE_URL = 'https://www.dachstock.ch'
-  name = 'Dachstock'
+  title = 'Dachstock'
   url = new URL('/events', this.BASE_URL).toString()
   city = 'Bern'
   dateFormat = 'dd.MM.yyyy - HH:mm'

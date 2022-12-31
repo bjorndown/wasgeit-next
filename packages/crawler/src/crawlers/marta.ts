@@ -1,14 +1,13 @@
 import { Element, Page } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
-const URL = 'https://www.cafemarta.ch'
-
 class Marta extends Crawler {
-  name = 'Marta'
-  url = URL
+  key = 'marta'
+  title = 'Marta'
+  url = 'https://www.cafemarta.ch'
   city = 'Bern'
-  dateFormat = 'MMMd'
-  waitMsBeforeCrawl = 5_000
+  dateFormat = 'MMM d'
+  waitMsBeforeCrawl = 3_000
 
   getEventElements(page: Page) {
     return page.query('.eapp-events-calendar-grid-item')
@@ -22,8 +21,12 @@ class Marta extends Crawler {
     return element.childText('.eapp-events-calendar-grid-item-name')
   }
 
-  getUrl(element: Element) {
-    return Promise.resolve(this.url)
+  async getUrl(element: Element) {
+    return this.url
+  }
+
+  prepareDate(date: string): string {
+    return date.replace('MAY', 'MAI')
   }
 }
 

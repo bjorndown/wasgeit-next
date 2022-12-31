@@ -2,7 +2,8 @@ import { Page, Element } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Schueuer extends Crawler {
-  name = 'Schüür'
+  key = 'schueuer'
+  title = 'Schüür'
   url = 'https://www.schuur.ch/programm'
   city = 'Luzern'
 

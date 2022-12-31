@@ -2,8 +2,9 @@ import { Page, Element } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Kiff extends Crawler {
+  key = 'kiff'
   BASE_URL = 'https://www.kiff.ch'
-  name = 'Kiff'
+  title = 'Kiff'
   url = new URL('/de/home.html?view=list', this.BASE_URL).toString()
   city = 'Aarau'
   dateFormat = 'dd MMM'

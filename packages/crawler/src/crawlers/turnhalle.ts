@@ -2,7 +2,8 @@ import { Element, Page } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
 class Turnhalle extends Crawler {
-  name = 'Turnhalle'
+  key = 'turnhalle'
+  title = 'Turnhalle'
   url = 'https://www.turnhalle.ch'
   city = 'Bern'
 
