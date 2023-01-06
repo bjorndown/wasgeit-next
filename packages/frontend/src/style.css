@@ -29,6 +29,11 @@ a {
     text-decoration: none;
 }
 
+a.back::before {
+    content: '←';
+    margin-right: 0.4rem;
+}
+
 ol,
 ul {
     list-style: none;

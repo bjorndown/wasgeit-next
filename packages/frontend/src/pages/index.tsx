@@ -101,7 +101,17 @@ const Index = () => {
           }
         }
 
-        @media (min-height: 860px) {
+        @media (min-height: 851px) and (max-height: 1023px) {
+          header {
+            height: 5vh;
+          }
+
+          main {
+            height: calc(100vh - 5vh);
+          }
+        }
+
+        @media (min-height: 1024px) {
           header {
             height: 4vh;
           }

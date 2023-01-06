@@ -1,24 +1,25 @@
 const Impressum = () => {
   return (
     <article>
-      <h1>Impressum</h1>
       <p>
-        <a href="mailto:hallo@wasgeit.ch">Kontakt</a>
+        <a className="back" href="/">
+          Zurück
+        </a>
       </p>
+      <h2>Kontakt</h2>
       <p>
-        <a href="https://github.com/bjorndown/wasgeit-next">Source code</a>
+        <a href="mailto:hallo@wasgeit.ch">hallo@wasgeit.ch</a>
       </p>
+      <h2>Source</h2>
       <p>
-        Betrieben mit <a href="https://vercel.com">vercel</a> und{' '}
-        <a href="https://digitalocean.com">Digital Ocean</a>
+        <a href="https://github.com/bjorndown/wasgeit-next">
+          https://github.com/bjorndown/wasgeit-next
+        </a>
       </p>
+
       <style jsx>{`
         article {
           padding: 0.5rem;
-        }
-
-        a {
-          font-weight: bold;
         }
       `}</style>
     </article>
