@@ -20,7 +20,7 @@ export const uploadFile = async (
   fileName: string,
   data: Buffer | string
 ): Promise<void> => {
-  const params = {
+  const putObjectCommand = new PutObjectCommand({
     Bucket: SPACE_NAME,
     Key: `${BUCKET_NAME}/${fileName}`,
     Body: zlib.gzipSync(data),
@@ -28,6 +28,6 @@ export const uploadFile = async (
     ContentType: 'application/json',
     ContentEncoding: 'gzip',
     CacheControl: `max-age=${60 * 60 * 2}`,
-  }
-  await s3Client.send(new PutObjectCommand(params))
+  })
+  await s3Client.send(putObjectCommand)
 }
