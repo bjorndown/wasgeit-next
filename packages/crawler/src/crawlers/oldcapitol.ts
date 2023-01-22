@@ -1,12 +1,11 @@
 import { Element, Page } from '../lib/browser'
 import { Crawler, register } from '../lib/crawler'
 
-const BASE_URL = 'https://oldcapitol.ch'
-
 class OldCapitol extends Crawler {
+  BASE_URL = 'https://oldcapitol.ch'
   key = 'oldcapitol'
   title = 'Old Capitol'
-  url = `${BASE_URL}/events`
+  url = new URL('/events', this.BASE_URL).toString()
   city = 'Langenthal'
   dateFormat = 'dd.MM.'
   waitMsBeforeCrawl = 1_000
@@ -28,7 +27,9 @@ class OldCapitol extends Crawler {
   }
 
   getUrl(element: Element) {
-    return element.getAttribute('href').then(path => `${BASE_URL}${path}`)
+    return element
+      .getAttribute('href')
+      .then(path => new URL(path, this.BASE_URL).toString())
   }
 }
 

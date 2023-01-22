@@ -10,11 +10,11 @@ class Turnhalle extends Crawler {
   dateFormat = 'dd.MM.yy'
 
   getTitle(element: Element): Promise<string> {
-    return element.childText('h4')
+    return element.childText('div')
   }
 
   getStart(element: Element): Promise<string> {
-    return element.childText('h2')
+    return element.childText('h4')
   }
 
   getUrl(element: Element): Promise<string> {
@@ -28,7 +28,8 @@ class Turnhalle extends Crawler {
   }
 
   prepareDate(date: string) {
-    return date.replaceAll(' ', '').slice(3, 11)
+    const s = date.split('>')[0].replaceAll(' ', '')
+    return s.slice(s.length - this.dateFormat.length, s.length)
   }
 
   onLoad() {

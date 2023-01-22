@@ -1,5 +1,5 @@
 import { Element, Page } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { Crawler, RawEvent, register } from '../lib/crawler'
 
 class Lacapella extends Crawler {
   key = 'lacapella'
@@ -9,7 +9,7 @@ class Lacapella extends Crawler {
   city = 'Bern'
   dateFormat = "dd. MMMM yyyy HH:mm 'Uhr'"
 
-  async crawl(page: Page) {
+  protected async getRawEvents(page: Page): Promise<RawEvent[]> {
     const monthGroups = await this.getEventElements(page)
 
     const eventsPerMonth = await Promise.all(
@@ -21,39 +21,33 @@ class Lacapella extends Crawler {
           eventElements.map(async element => {
             const date = await element.childText('.lc-event__date')
             const time = await element.childText('.lc-event__time')
-            const title = await element.childText('.lc-event__text')
-            const anchor = await element.query('.lc-event__text')
-            const href = await anchor?.getAttribute('href')
-            const url = new URL(href ?? '', this.BASE_URL).toString()
-
+            const title = await this.getTitle(element)
+            const url = await this.getUrl(element)
             return { start: `${date} ${monthYear} ${time}`, title, url }
           })
         )
       })
     )
 
-    const eventsWithVenue = eventsPerMonth.flat().map(rawEvent => ({
-      ...rawEvent,
-      venue: `${this.title}, ${this.city}`,
-    }))
-
-    return this.postProcess(eventsWithVenue)
+    return eventsPerMonth.flat()
   }
 
   getEventElements(page: Page) {
     return page.query('.eventlist__group')
   }
 
-  getStart(element: Element) {
-    return Promise.resolve('')
+  async getStart(element: Element) {
+    return ''
   }
 
   getTitle(element: Element) {
-    return Promise.resolve('')
+    return element.childText('.lc-event__text')
   }
 
-  getUrl(element: Element) {
-    return Promise.resolve('')
+  async getUrl(element: Element) {
+    const anchor = await element.query('.lc-event__text')
+    const href = await anchor?.getAttribute('href')
+    return new URL(href ?? '', this.BASE_URL).toString()
   }
 }
 

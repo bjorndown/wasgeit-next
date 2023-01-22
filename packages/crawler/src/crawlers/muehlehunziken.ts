@@ -13,11 +13,11 @@ class Muehlehunziken extends Crawler {
   }
 
   async getTitle(element: Element) {
-    return element.childText('div > div:nth-child(1)')
+    return element.childText('div > div:nth-child(2)')
   }
 
   async getStart(element: Element) {
-    return element.childText('div > div:nth-child(2)')
+    return element.childText('div > div:nth-child(1)')
   }
 
   async getUrl(element: Element) {

@@ -15,11 +15,11 @@ class XTra extends Crawler {
   }
 
   async getTitle(element: Element) {
-    return element.childText('div h3')
+    return element.childText('div h2')
   }
 
   async getStart(element: Element) {
-    return element.childText('div h2')
+    return element.childText('div h3')
   }
 
   async getUrl(element: Element) {
