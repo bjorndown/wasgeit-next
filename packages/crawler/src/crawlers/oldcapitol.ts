@@ -15,7 +15,7 @@ class OldCapitol extends Crawler {
   }
 
   getEventElements(page: Page) {
-    return page.query('.event-info')
+    return page.query('a.event')
   }
 
   getStart(element: Element) {
