@@ -22,8 +22,9 @@ export const main = async () => {
   logger.info('done', { totalNumberOfEvents: events.length })
   await notifySlack(`crawling done, ${events.length} events uploaded`)
 
+  logger.info('broken crawlers', { failed: results.failed })
+
   if (results.failed.length > 0) {
-    logger.info('broken crawlers', { failed: results.failed })
     await notifySlack(
       `broken crawlers: ${results.failed.map(
         failure => `${failure.key}: "${failure.error}"`
@@ -32,16 +33,16 @@ export const main = async () => {
   }
 
   for (const result of results.successful) {
-    if (result.failed) {
-      logger.info('broken event', { failed: result.failed })
+    logger.info('broken event', { failed: result.failed })
+    if (result.failed.length > 0) {
       await notifySlack(
         `crawler "${result.key}" has ${
           result.failed.length
         } broken events: ${JSON.stringify(result.failed)}`
       )
     }
-    if (result.ignored) {
-      logger.info('ignored event', { ignored: result.ignored })
+    logger.info('ignored event', { ignored: result.ignored })
+    if (result.ignored.length > 0) {
       await notifySlack(
         `crawler "${result.key}" ignored ${
           result.ignored.length
