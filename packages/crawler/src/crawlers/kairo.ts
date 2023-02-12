@@ -4,7 +4,7 @@ import { Crawler, register } from '../lib/crawler'
 class Kairo extends Crawler {
   key = 'kairo'
   title = 'Kairo'
-  url = 'https://www.cafe-kairo.ch/kultur'
+  url = 'https://www.cafe-kairo.ch'
   city = 'Bern'
   dateFormat = 'EEE dd.MM.yyyy'
 
@@ -21,7 +21,7 @@ class Kairo extends Crawler {
   }
 
   getTitle(element: Element): Promise<string | undefined> {
-    return element.childText('h1')
+    return element.childText('h2')
   }
 
   getUrl(element: Element): Promise<string | undefined> {
