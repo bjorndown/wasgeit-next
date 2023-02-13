@@ -6,10 +6,10 @@ class Kairo extends Crawler {
   title = 'Kairo'
   url = 'https://www.cafe-kairo.ch'
   city = 'Bern'
-  dateFormat = 'EEE dd.MM.yyyy'
+  dateFormat = 'dd.MM.yyyy'
 
   prepareDate(date: string) {
-    return date.slice(0, 13)
+    return date.slice(4, 14)
   }
 
   getEventElements(page: Page): Promise<Element[]> {
