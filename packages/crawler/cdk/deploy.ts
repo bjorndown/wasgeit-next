@@ -11,13 +11,17 @@ class WasGeitCrawlerStack extends Stack {
   constructor(scope: App, id: string, props?: StackProps) {
     super(scope, id, props)
 
-    const repo = Repository.fromRepositoryArn(this, 'wasgeit-crawler-repo', 'arn:aws:ecr:eu-central-1:067015433675:067015433675.dkr.ecr.eu-central-1.amazonaws.com/wasgeit-crawler')
+    const repo = Repository.fromRepositoryArn(
+      this,
+      'wasgeit-crawler-repo',
+      'arn:aws:ecr:eu-central-1:067015433675:067015433675.dkr.ecr.eu-central-1.amazonaws.com/wasgeit-crawler'
+    )
 
     const fn = new DockerImageFunction(this, 'wasgeit-crawler-fn', {
       code: DockerImageCode.fromEcr(repo, { tagOrDigest: 'production' }),
       timeout: Duration.minutes(3),
       memorySize: 128,
-      currentVersionOptions: { retryAttempts: 0 },
+      retryAttempts: 0,
     })
 
     const rule = new Rule(this, 'wasgeit-crawler-cron-rule', {
