@@ -28,7 +28,8 @@
     "date-fns-tz": "1.3.7",
     "lodash": "4.17.21",
     "puppeteer-core": "19.4.1",
-    "winston": "3.8.2"
+    "winston": "3.8.2",
+    "winston-transport": "^4.5.0"
   },
   "scripts": {
     "build": "ncc build src/index.ts",
@@ -42,5 +43,8 @@
     "@aws-sdk/signature-v4-crt": {
       "optional": true
     }
+  },
+  "volta": {
+    "node": "18.15.0"
   }
 }

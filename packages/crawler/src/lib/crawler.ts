@@ -24,17 +24,22 @@ export type RawEvent = {
 export type CrawlResult = {
   key: string
   events: Event[]
-  failed: { event: RawEvent; error: any }[]
+  broken: { event: RawEvent; error: any }[]
   ignored: { event: RawEvent; reason: string }[]
 }
 
+type CrawlingSummary = {
+  successful: CrawlResult[]
+  broken: { result?: CrawlResult; crawlerKey: string; error: Error }[]
+}
+
 export abstract class Crawler {
-  public abstract key: string
-  public abstract title: string
-  public abstract url: string
-  public abstract city: string
-  public dateFormat = 'ISO'
-  public waitMsBeforeCrawl?: number
+  abstract readonly key: string
+  abstract readonly title: string
+  abstract readonly url: string
+  abstract readonly city: string
+  readonly dateFormat: 'ISO' | string = 'ISO'
+  readonly waitMsBeforeCrawl?: number
 
   async crawl(page: Page): Promise<CrawlResult> {
     const ignored: CrawlResult['ignored'] = []
@@ -52,14 +57,14 @@ export abstract class Crawler {
       return true
     })
 
-    const { events, failed } = this.postProcess(completeEvents)
+    const { events, broken } = this.postProcess(completeEvents)
 
     const eventsWithVenue = events.map(event => ({
       ...event,
-      venue: `${this.title}, ${this.city}`,
+      venue: this.venue,
     }))
 
-    return { key: this.key, events: eventsWithVenue, failed, ignored }
+    return { key: this.key, events: eventsWithVenue, broken, ignored }
   }
 
   protected async getRawEvents(page: Page): Promise<RawEvent[]> {
@@ -74,7 +79,7 @@ export abstract class Crawler {
     )
   }
 
-  postProcess(events: RawEvent[]): Pick<CrawlResult, 'events' | 'failed'> {
+  postProcess(events: RawEvent[]): Pick<CrawlResult, 'events' | 'broken'> {
     const today = new Date()
 
     // Problem: Most venues only specify day and month of their events. If a venue publishes events more
@@ -84,7 +89,7 @@ export abstract class Crawler {
     // accordingly.
     let previousDate = startOfDay(new Date())
 
-    const failed: CrawlResult['failed'] = []
+    const broken: CrawlResult['broken'] = []
 
     const eventsWithDate = events
       .map(event => {
@@ -97,12 +102,12 @@ export abstract class Crawler {
           previousDate = parseISO(processedEvent.start)
           return processedEvent
         } catch (error: any) {
-          failed.push({ event, error })
+          broken.push({ event, error })
         }
       })
       .filter((e): e is Event => !!e)
 
-    return { failed, events: eventsWithDate }
+    return { broken, events: eventsWithDate }
   }
 
   processDate(
@@ -127,7 +132,7 @@ export abstract class Crawler {
       if (!dateContainsTime) {
         // Setting the time to 8 o'clock produces more sensible calendar entries in the frontend
         // If we parse a date-only value the event's start time will be 00:00, which will create a calendar entry lasting from 00:00 to 23:59
-        logger.info('setting time', { url: event.url })
+        logger.debug('setting time', { url: event.url })
         eventDateLocal = setHours(eventDateLocal, 20)
       }
 
@@ -136,7 +141,7 @@ export abstract class Crawler {
         isBefore(eventDateLocal, previousDate) &&
         !dateContainsYear
       ) {
-        logger.info('moving to next year', {
+        logger.debug('moving to next year', {
           url: event.url,
         })
         eventDateLocal = setYear(eventDateLocal, getYear(today) + 1)
@@ -149,7 +154,7 @@ export abstract class Crawler {
         start: eventDateUtc.toISOString(),
       }
     } catch (error) {
-      logger.info(
+      logger.debug(
         `error while parsing '${eventDateString}' as '${this.dateFormat}'`,
         {
           event,
@@ -172,32 +177,40 @@ export abstract class Crawler {
 
   abstract getEventElements(page: Page): Promise<Element[]>
 
+  get venue(): string {
+    return `${this.title}, ${this.city}`
+  }
+
   onLoad() {}
 }
 
 export const runCrawlers = async (crawlers: Crawler[]) => {
   const browser = await openBrowser()
 
-  // TODO naming/type.. Summary?
-  const overallResult: {
-    successful: CrawlResult[]
-    failed: { key: string; error: Error }[]
-  } = { successful: [], failed: [] }
+  const overallResult: CrawlingSummary = { successful: [], broken: [] }
 
   await Promise.all(
     crawlers.map(async crawler => {
       try {
-        logger.info('crawling start', {
+        logger.debug('crawling start', {
           crawler: crawler.title,
         })
         const page = await browser.openPage(crawler)
         const result = await crawler.crawl(page)
-        logger.info('crawling end', {
+        logger.debug('crawling end', {
           crawler: crawler.title,
         })
-        overallResult.successful.push(result)
+        if (result.events.length > 0) {
+          overallResult.successful.push(result)
+        } else {
+          overallResult.broken.push({
+            crawlerKey: crawler.key,
+            error: new Error('returned no events'),
+            result,
+          })
+        }
       } catch (error: any) {
-        return overallResult.failed.push({ error, key: crawler.key })
+        return overallResult.broken.push({ error, crawlerKey: crawler.key })
       }
     })
   )

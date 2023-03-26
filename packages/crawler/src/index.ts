@@ -1,52 +1,78 @@
-import { getCrawlers, runCrawlers } from './lib/crawler'
-import { uploadFile } from './lib/upload'
+import { getCrawler, getCrawlers, runCrawlers } from './lib/crawler'
+import { downloadEvents, uploadFile } from './lib/transfer'
 import { logger } from './lib/logging'
-import { notifySlack } from './lib/slack'
+import { Event } from '@wasgeit/common/src/types'
 
 import './crawlers'
+import { SlackTransport } from './lib/slack'
+
+logger.add(new SlackTransport({ level: 'info' }))
+
+const getExistingEventsFor = async (
+  crawlerKeys: string[]
+): Promise<Event[]> => {
+  const existingEvents = await downloadEvents()
+  const brokenVenues = crawlerKeys.map(crawler => getCrawler(crawler).venue)
+  logger.debug('downloaded existing events for broken crawlers', {
+    totalExistingEvents: existingEvents.length,
+    brokenCrawlers: crawlerKeys,
+  })
+  return existingEvents.filter(event => brokenVenues.includes(event.venue))
+}
 
 export const main = async () => {
-  const results = await runCrawlers(getCrawlers())
+  const summary = await runCrawlers(getCrawlers())
+  logger.info('all venues crawled')
 
-  const events = results.successful.map(result => result.events).flat(1)
+  const newEvents = summary.successful.map(result => result.events).flat(1)
 
-  logger.info('venues crawled')
-
-  if (events.length === 0) {
-    await notifySlack('crawling broken, no events returned')
+  if (newEvents.length === 0) {
+    logger.info('crawling broken, no new events returned')
     return
   }
 
-  await uploadFile('events.json', JSON.stringify(events))
+  logger.debug('crawling summary', summary)
 
-  logger.info('done', { totalNumberOfEvents: events.length })
-  await notifySlack(`crawling done, ${events.length} events uploaded`)
-
-  logger.info('broken crawlers', { failed: results.failed })
-
-  if (results.failed.length > 0) {
-    await notifySlack(
-      `broken crawlers: ${results.failed.map(
-        failure => `${failure.key}: "${failure.error}"`
+  if (summary.broken.length <= 0) {
+    await uploadFile(newEvents)
+    logger.info(`${newEvents.length} new events uploaded`, {
+      totalNumberOfEvents: newEvents.length,
+    })
+  } else {
+    logger.info(
+      `broken crawlers: ${summary.broken.map(
+        failure => `${failure.crawlerKey}: "${failure.error}"`
       )}`
+    )
+
+    const existingEventsOfBrokenCrawlers = await getExistingEventsFor(
+      summary.broken.map(crawler => crawler.crawlerKey)
+    )
+
+    await uploadFile(newEvents.concat(existingEventsOfBrokenCrawlers))
+    logger.info(
+      `${newEvents.length} new and ${existingEventsOfBrokenCrawlers.length} existing events uploaded`,
+      {
+        totalNumberOfEvents: newEvents.length,
+        newEvents: newEvents.length,
+        existingEvents: existingEventsOfBrokenCrawlers.length,
+      }
     )
   }
 
-  for (const result of results.successful) {
-    logger.info('broken event', { failed: result.failed })
-    if (result.failed.length > 0) {
-      await notifySlack(
-        `crawler "${result.key}" has ${
-          result.failed.length
-        } broken events: ${JSON.stringify(result.failed)}`
+  for (const run of summary.successful) {
+    if (run.broken.length > 0) {
+      logger.info(
+        `crawler "${run.key}" has ${
+          run.broken.length
+        } broken events: ${JSON.stringify(run.broken)}`
       )
     }
-    logger.info('ignored event', { ignored: result.ignored })
-    if (result.ignored.length > 0) {
-      await notifySlack(
-        `crawler "${result.key}" ignored ${
-          result.ignored.length
-        } events: ${JSON.stringify(result.ignored)}`
+    if (run.ignored.length > 0) {
+      logger.info(
+        `crawler "${run.key}" ignored ${
+          run.ignored.length
+        } events: ${JSON.stringify(run.ignored)}`
       )
     }
   }

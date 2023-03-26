@@ -2,10 +2,6 @@ import { Event } from '@wasgeit/common/src/types'
 import { Crawler } from './crawler'
 import { Page, Element } from './browser'
 
-jest.mock('./slack', () => {
-  notifySlack: jest.fn()
-})
-
 const now = new Date('2022-10-02 10:01:02')
 beforeAll(() => {
   jest.useFakeTimers({ now: now })
@@ -20,6 +16,7 @@ class TestCrawler extends Crawler {
   city = ''
   title = 'Test'
   url = ''
+  dateFormat: string
 
   constructor(dateFormat: string) {
     super()

@@ -1,8 +1,7 @@
 import useSWR from 'swr'
 import { Event } from '@wasgeit/common/src/types'
+import { EVENTS_JSON_URL } from '@wasgeit/common/src/constants'
 
-export const EVENTS_JSON_URL =
-  'https://redcoast.fra1.digitaloceanspaces.com/wasgeit/events.json'
 
 export const useEvents = () => {
   const {
