@@ -1,6 +1,5 @@
 import { Event } from '@wasgeit/common/src/types'
 import { groupAndFilter } from './useGroupedEvents'
-import { afterAll, beforeAll } from '@jest/globals'
 
 beforeAll(() => {
   jest.useFakeTimers({ now: new Date('2022-10-02') })
