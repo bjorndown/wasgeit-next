@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import '../style.css'
 import { SWRConfig } from 'swr'
-import { EVENTS_JSON_URL } from '../hooks/useEvents'
 import React from 'react'
+import { EVENTS_JSON_URL } from '@wasgeit/common/src/constants'
 
 // @ts-ignore
 const fetcher = (...args) => fetch(...args).then(res => res.json())
