@@ -20,7 +20,7 @@ export type OpenPageArgs = {
   onLoad?: () => void
 }
 
-export class Browser {
+class Browser {
   constructor(private browser: puppeteer.Browser) {}
 
   async openPage({
@@ -59,7 +59,9 @@ export class Page {
 }
 
 export class Element {
-  constructor(private element: puppeteer.ElementHandle) {}
+  private readonly ZERO_WIDTH_SPACE = '\u200B'
+
+  constructor(protected element: puppeteer.ElementHandle) {}
 
   async getAttribute(attributeName: string): Promise<string> {
     return this.element.evaluate(
@@ -86,35 +88,27 @@ export class Element {
   }
 
   async textContent(): Promise<string> {
-    return this.element.evaluate(
-      element =>
-        element.textContent
-          ?.trim() // cannot extract into method because scope is not available in remote browser
-          .replaceAll(/[\n\t]+/g, ' ')
-          .replaceAll(/ {2,}/g, ' ')
-          .replaceAll('\u200B', '') ?? // zero width space
-        ''
+    const textContent = await this.element.evaluate(
+      element => element.textContent
     )
+    return this.cleanText(textContent)
   }
 
   async childText(selector: string): Promise<string> {
     const element = await this.query(selector)
-    return element
-      ? element.evaluate(
-          element =>
-            (element as HTMLElement).innerText
-              ?.trim() // cannot extract into method because scope is not available in remote browser
-              .replaceAll(/[\n\t]+/g, ' ')
-              .replaceAll(/ {2,}/g, ' ')
-              .replaceAll('\u200B', '') ?? // zero width space
-            ''
-        )
-      : ''
+    const innerText = await element?.element.evaluate(
+      element => (element as HTMLElement).innerText
+    )
+    return this.cleanText(innerText)
   }
 
-  async evaluate(
-    ...params: Parameters<typeof this.element.evaluate>
-  ): Promise<ReturnType<typeof this.element.evaluate>> {
-    return this.element.evaluate(...params)
+  cleanText(something: string | undefined | null): string {
+    return (
+      something
+        ?.trim()
+        .replaceAll(/[\n\t]+/g, ' ')
+        .replaceAll(/ {2,}/g, ' ')
+        .replaceAll(this.ZERO_WIDTH_SPACE, '') ?? ''
+    )
   }
 }
