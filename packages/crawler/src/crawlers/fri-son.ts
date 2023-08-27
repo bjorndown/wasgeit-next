@@ -5,31 +5,26 @@ class FriSon extends Crawler {
   key = 'fri-son'
   BASE_URL = 'https://fri-son.ch'
   title = 'Fri-Son'
-  url = new URL('/de/programm', this.BASE_URL).toString()
+  url = new URL('/de/program', this.BASE_URL).toString()
   city = 'Fribourg'
 
   getEventElements(page: Page): Promise<Element[]> {
-    return page.query('.node.node-event')
+    return page.query('article.node--type-event')
   }
 
-  getStart(element: Element): Promise<string | undefined> {
-    return element
-      .query('.date-display-single')
-      .then(el => el?.getAttribute('content'))
+  async getStart(element: Element): Promise<string | undefined> {
+    const el = await element.query('time')
+    return el?.getAttribute('datetime')
   }
 
   getTitle(element: Element): Promise<string | undefined> {
-    return element.childText('.field.field-name-field-event-artists')
+    return element.childText('.content-wrapper')
   }
 
-  getUrl(element: Element): Promise<string | undefined> {
-    return element
-      .getAttribute('about')
-      .then(attr => new URL(attr, this.BASE_URL).toString())
-  }
-
-  onLoad() {
-    document.querySelector('.block.block-block.last.odd')?.scrollIntoView()
+  async getUrl(element: Element): Promise<string | undefined> {
+    const anchor = await element.query('a')
+    const path = (await anchor?.getAttribute('href')) ?? ''
+    return new URL(path, this.BASE_URL).toString()
   }
 }
 

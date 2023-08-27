@@ -6,10 +6,10 @@ class Cafete extends Crawler {
   title = 'Cafete'
   url = 'https://cafete.ch/'
   city = 'Bern'
-  dateFormat = "dd. MMMM yyyy HH'h'mm"
+  dateFormat = "EE dd. MMMM yyyy HH'h'mm"
 
   prepareDate(date: string) {
-    return date.replace(' — Doors:', '').slice(3, 25)
+    return date.replace(' — Doors:', '')
   }
 
   getEventElements(page: Page): Promise<Element[]> {
