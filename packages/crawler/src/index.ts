@@ -4,9 +4,9 @@ import { logger } from './lib/logging'
 import { Event } from '@wasgeit/common/src/types'
 
 import './crawlers'
-import { SlackTransport } from './lib/slack'
+import { enableSlackTransport } from './lib/slack'
 
-logger.add(new SlackTransport({ level: 'info' }))
+enableSlackTransport()
 
 const getExistingEventsFor = async (
   crawlerKeys: string[]
