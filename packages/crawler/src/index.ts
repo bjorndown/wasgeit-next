@@ -1,12 +1,13 @@
 import { getCrawler, getCrawlers, runCrawlers } from './lib/crawler'
-import { downloadEvents, uploadFile } from './lib/transfer'
-import { logger } from './lib/logging'
+import { downloadEvents, uploadEvents, uploadLogJson } from './lib/transfer'
+import { LOG_FILE_PATH, logger } from './lib/logging'
 import { Event } from '@wasgeit/common/src/types'
 
 import './crawlers'
-import { enableSlackTransport } from './lib/slack'
+import { BUCKET_NAME, SPACE_NAME } from '@wasgeit/common/src/constants'
+import winston from 'winston'
 
-enableSlackTransport()
+logger.add(new winston.transports.File({ filename: LOG_FILE_PATH }))
 
 const getExistingEventsFor = async (
   crawlerKeys: string[]
@@ -34,7 +35,7 @@ export const main = async () => {
   logger.debug('crawling summary', summary)
 
   if (summary.broken.length <= 0) {
-    await uploadFile(newEvents)
+    await uploadEvents(newEvents)
     logger.info(`${newEvents.length} new events uploaded`, {
       totalNumberOfEvents: newEvents.length,
     })
@@ -49,7 +50,7 @@ export const main = async () => {
       summary.broken.map(crawler => crawler.crawlerKey)
     )
 
-    await uploadFile(newEvents.concat(existingEventsOfBrokenCrawlers))
+    await uploadEvents(newEvents.concat(existingEventsOfBrokenCrawlers))
     logger.info(
       `${newEvents.length} new and ${existingEventsOfBrokenCrawlers.length} existing events uploaded`,
       {
@@ -78,4 +79,9 @@ export const main = async () => {
   }
 }
 
-main()
+main().finally(() =>
+  uploadLogJson(
+    LOG_FILE_PATH,
+    `${BUCKET_NAME}/logs/${new Date().toISOString()}.log`
+  )
+)
