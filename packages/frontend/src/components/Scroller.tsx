@@ -40,7 +40,7 @@ export const Scroller = ({ topDate, allDates, hidden = true }: Props) => {
                 {format(parseISO(month), 'MMM', { locale: de })}
               </h2>
               <ol>
-                {dates.sort().map((date) => {
+                {dates.sort().map(date => {
                   const date1 = parseISO(date)
                   return (
                     <li key={date}>

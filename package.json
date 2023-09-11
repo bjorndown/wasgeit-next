@@ -2,6 +2,9 @@
   "name": "wasgeit",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "reformat": "prettier --write '**/*.{tsx,css,ts,json}'"
+  },
   "devDependencies": {
     "prettier": "2.5.1"
   }

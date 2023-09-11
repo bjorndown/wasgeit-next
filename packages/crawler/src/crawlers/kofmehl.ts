@@ -22,7 +22,6 @@ class Kofmehl extends Crawler {
 
   getStart(element: Element): Promise<string | undefined> {
     return element.childText('.events__date')
-
   }
 
   getUrl(element: Element): Promise<string | undefined> {

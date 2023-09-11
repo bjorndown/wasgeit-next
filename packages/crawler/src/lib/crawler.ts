@@ -227,7 +227,9 @@ export const getCrawlers = () => Object.values(crawlers)
 export const getCrawler = (name: string) => {
   if (!(name in crawlers)) {
     throw new Error(
-      `crawler ${name} not registered, available are: ${Object.keys(crawlers)}`
+      `crawler ${name} not registered, available are: ${Object.keys(
+        crawlers
+      ).sort()}`
     )
   }
   return crawlers[name]

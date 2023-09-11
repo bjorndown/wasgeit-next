@@ -13,14 +13,14 @@ export const useAllDates = () => {
     return Array.from(
       new Set(
         events
-          .map((event) =>
+          .map(event =>
             formatInTimeZone(
               parseISO(event.start),
               'Europe/Zurich',
               'yyyy-MM-dd'
             )
           )
-          .filter((date) => isFuture(parseISO(date)) || isToday(parseISO(date)))
+          .filter(date => isFuture(parseISO(date)) || isToday(parseISO(date)))
       )
     )
   }, [events, isValidating])

@@ -1,7 +1,7 @@
 *,
 *:before,
 *:after {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body,
@@ -14,57 +14,57 @@ h3,
 h4,
 h5,
 h6 {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
 body {
-    font-family: 'Red Hat Text', 'Lato', 'Open Sans', 'FreeSans', sans-serif;
-    background-color: var(--bg-color);
-    color: var(--color);
+  font-family: 'Red Hat Text', 'Lato', 'Open Sans', 'FreeSans', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--color);
 }
 
 a {
-    color: var(--color);
-    text-decoration: none;
+  color: var(--color);
+  text-decoration: none;
 }
 
 a.back::before {
-    content: '←';
-    margin-right: 0.4rem;
+  content: '←';
+  margin-right: 0.4rem;
 }
 
 ol,
 ul {
-    list-style: none;
+  list-style: none;
 }
 
 @media (prefers-color-scheme: dark) {
-    :root {
-        --bg-color: black;
-        --color: white;
-        --invert-color: black;
-        --invert-bg-color: white;
-        --shadow-color: #fff6;
-    }
+  :root {
+    --bg-color: black;
+    --color: white;
+    --invert-color: black;
+    --invert-bg-color: white;
+    --shadow-color: #fff6;
+  }
 }
 
 @media (prefers-color-scheme: light) {
-    :root {
-        --bg-color: white;
-        --color: black;
-        --invert-color: white;
-        --invert-bg-color: black;
-        --shadow-color: #0006;
-    }
+  :root {
+    --bg-color: white;
+    --color: black;
+    --invert-color: white;
+    --invert-bg-color: black;
+    --shadow-color: #0006;
+  }
 }
 
 :root {
-    --padding: 0.2rem;
-    --large-padding: 0.4rem;
-    --xl-padding: calc(3 * var(--large-padding));
+  --padding: 0.2rem;
+  --large-padding: 0.4rem;
+  --xl-padding: calc(3 * var(--large-padding));
 
-    --large-font-size: 2rem;
-    --medium-font-size: 1.5rem;
-    --small-font-size: 1.1rem;
+  --large-font-size: 2rem;
+  --medium-font-size: 1.5rem;
+  --small-font-size: 1.1rem;
 }
