@@ -15,7 +15,7 @@ const main = async () => {
     const results = await runCrawlers([crawlers])
     logger.info(results)
   } catch (error: any) {
-    logger.error(error)
+    logger.error('Crawler failed', error)
   }
 }
 
