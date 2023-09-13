@@ -1,5 +1,5 @@
 import { Page, Element } from '../lib/browser'
-import { Crawler, CrawlResult, RawEvent, register } from '../lib/crawler'
+import { Crawler, register } from '../lib/crawler'
 
 class Stellwerk extends Crawler {
   key = 'stellwerk'
@@ -8,7 +8,7 @@ class Stellwerk extends Crawler {
   url = new URL('/', this.BASE_URL).toString()
   city = 'Bern'
   dateFormat = 'EE dd.MM'
-  waitMsBeforeCrawl = 1_500
+  waitMsBeforeCrawl = 1_000
 
   getEventElements(page: Page): Promise<Element[]> {
     return page.query('article.post > a')
@@ -32,29 +32,6 @@ class Stellwerk extends Crawler {
   onLoad() {
     document.querySelector<HTMLElement>('.posts__loadmore.loadmore')?.click()
     document.querySelector<HTMLElement>('.posts__loadmore.loadmore')?.click()
-  }
-
-  async crawl(page: Page): Promise<CrawlResult> {
-    const crawlResult = await super.crawl(page)
-
-    // There is a bug on the site that causes events just before the end of the
-    // page to be shown twice after hitting the "load more" button.
-    // The workaround is to de-duplicate by title:
-    crawlResult.events = crawlResult.events.filter(event => {
-      const eventsWithSameTitles = crawlResult.events
-        .map((e, i): [number, RawEvent] => [i, e])
-        .filter(tuple => tuple[1].title === event.title)
-      const isDuplicate =
-        eventsWithSameTitles.length > 1 && event !== eventsWithSameTitles[0][1]
-
-      if (isDuplicate) {
-        crawlResult.ignored.push({ event, reason: 'duplicated' })
-        return false
-      }
-      return true
-    })
-
-    return crawlResult
   }
 }
 
