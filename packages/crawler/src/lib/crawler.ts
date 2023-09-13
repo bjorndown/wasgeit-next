@@ -142,6 +142,8 @@ export abstract class Crawler {
         !dateContainsYear
       ) {
         logger.debug('moving to next year', {
+          eventDateLocal: eventDateLocal.toISOString(),
+          previousDate: previousDate.toISOString(),
           url: event.url,
         })
         eventDateLocal = setYear(eventDateLocal, getYear(today) + 1)
