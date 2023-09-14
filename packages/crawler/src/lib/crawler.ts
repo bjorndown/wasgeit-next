@@ -21,16 +21,24 @@ export type RawEvent = {
   start?: string
 }
 
-export type CrawlResult = {
+type CrawlResult = {
   key: string
   events: Event[]
   broken: { event: RawEvent; error: any }[]
   ignored: { event: RawEvent; reason: string }[]
 }
 
-type CrawlingSummary = {
+export type CrawlingSummary = {
   successful: CrawlResult[]
   broken: { result?: CrawlResult; crawlerKey: string; error: Error }[]
+}
+
+/**
+ * Summary without complete events
+ */
+export type StrippedSummary = {
+  successful: Omit<CrawlResult, 'events'>[]
+  broken: CrawlingSummary['broken']
 }
 
 export abstract class Crawler {
