@@ -62,9 +62,21 @@ export const uploadEvents = async (
   events: Event[]
 ): Promise<void> => {
   const body = zlib.gzipSync(JSON.stringify(events))
-  const putObjectCommand = new PutObjectCommand({
+
+  const eventArchive = new PutObjectCommand({
     Bucket: SPACE_NAME,
     Key: path.join(BUCKET_NAME, runKey, 'events.json'),
+    Body: body,
+    ACL: 'public-read',
+    ContentType: 'application/json',
+    ContentEncoding: 'gzip',
+    Metadata: { runKey },
+  })
+  await s3Client.send(eventArchive)
+
+  const eventsForFrontend = new PutObjectCommand({
+    Bucket: SPACE_NAME,
+    Key: OBJECT_KEY,
     Body: body,
     ACL: 'public-read',
     ContentType: 'application/json',
@@ -72,9 +84,8 @@ export const uploadEvents = async (
     CacheControl: `max-age=${60 * 60 * 2}`,
     Metadata: { runKey },
   })
-  await s3Client.send(putObjectCommand)
-  putObjectCommand.input.Key = OBJECT_KEY
-  delete putObjectCommand.input.CacheControl
+  await s3Client.send(eventsForFrontend)
+
   logger.info('events uploaded')
 }
 
