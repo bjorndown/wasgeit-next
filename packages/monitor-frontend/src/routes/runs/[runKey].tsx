@@ -1,11 +1,10 @@
 import { useParams, useRouteData } from '@solidjs/router'
 import { createRouteData, RouteDataArgs } from 'solid-start'
-import { Accessor, createResource, For, Show } from 'solid-js'
+import { createResource, For, Show } from 'solid-js'
 import './runs.module.css'
 import type { StrippedSummary } from '@wasgeit/crawler/src/lib/crawler'
 import type { Event } from '@wasgeit/common/src/types'
 import { EventsPerVenueChart } from '~/components/EventsPerVenueChart'
-import { EVENTS_JSON_URL } from '@wasgeit/common/src/constants'
 import { LogfileViewer } from '~/components/LogFileViewer'
 
 export const routeData = ({ params }: RouteDataArgs) => {
@@ -20,10 +19,9 @@ export const routeData = ({ params }: RouteDataArgs) => {
   })
 }
 
-
 export default function Runs() {
-  const logLines = useRouteData<typeof routeData>()
   const params = useParams()
+  const logLines = useRouteData<typeof routeData>()
   const [results] = createResource<StrippedSummary>(() =>
     fetch(
       new URL(
@@ -33,7 +31,13 @@ export default function Runs() {
     ).then(r => r.json())
   )
   const [events] = createResource<Event[]>(
-    () => fetch(EVENTS_JSON_URL).then(r => r.json()),
+    () =>
+      fetch(
+        new URL(
+          `wasgeit/${params.runKey}/events.json`,
+          'https://redcoast.fra1.digitaloceanspaces.com'
+        ).toString()
+      ).then(r => r.json()),
     { initialValue: [] }
   )
 
@@ -85,7 +89,7 @@ export default function Runs() {
         </For>
       </Show>
       <h2>Log</h2>
-      <LogfileViewer logLines={logLines}/>
+      <LogfileViewer logLines={logLines} />
       <h2>Events</h2>
     </main>
   )
