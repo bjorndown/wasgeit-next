@@ -1,17 +1,26 @@
 import * as echarts from 'echarts'
-import { onMount } from 'solid-js'
+import { Accessor, createMemo, onMount } from 'solid-js'
+import { Event } from '@wasgeit/common/src/types'
 
-export const Chart = ({
-  venueStats,
-}: {
-  venueStats: Record<string, number>
-}) => {
+export const EventsPerVenueChart = ({ events }: { events: Accessor<Event[]> }) => {
   let chartDom: HTMLElement | undefined
+
+  const venueStats = createMemo(() => {
+    return events().reduce((aggregate: Record<string, number>, event) => {
+      if (event.venue in aggregate) {
+        aggregate[event.venue] = aggregate[event.venue] + 1
+      } else {
+        aggregate[event.venue] = 1
+      }
+      return aggregate
+    }, {})
+  }, {})
 
   onMount(() => {
     if (!chartDom) {
       throw new Error('ref is null')
     }
+
     const myChart = echarts.init(chartDom)
     const option: echarts.EChartsOption = {
       tooltip: {
@@ -29,7 +38,7 @@ export const Chart = ({
       xAxis: [
         {
           type: 'category',
-          data: Object.keys(venueStats),
+          data: Object.keys(venueStats()),
           axisTick: {
             alignWithLabel: true,
           },
@@ -46,7 +55,7 @@ export const Chart = ({
           name: 'Events',
           type: 'bar',
           barWidth: '60%',
-          data: Object.values(venueStats),
+          data: Object.values(venueStats()),
         },
       ],
     }

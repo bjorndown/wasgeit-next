@@ -4,7 +4,7 @@ import { createResource, For, Show } from 'solid-js'
 import styles from './runs.module.css'
 import type { StrippedSummary } from '@wasgeit/crawler/src/lib/crawler'
 import type { Event } from '@wasgeit/common/src/types'
-import { Chart } from '~/components/Chart'
+import { EventsPerVenueChart } from '~/components/EventsPerVenueChart'
 import { EVENTS_JSON_URL } from '@wasgeit/common/src/constants'
 
 export const routeData = ({ params }: RouteDataArgs) => {
@@ -30,24 +30,16 @@ export default function Runs() {
       ).toString()
     ).then(r => r.json())
   )
-  const [events] = createResource<Event[]>(() =>
-    fetch(EVENTS_JSON_URL).then(r => r.json())
+  const [events] = createResource<Event[]>(
+    () => fetch(EVENTS_JSON_URL).then(r => r.json()),
+    { initialValue: [] }
   )
 
   return (
     <main>
       <h1>Run {params.runKey}</h1>
       <h2>Summary</h2>
-      <Chart
-        venueStats={(events() ?? []).reduce((aggregate: Record<string,number>,event,  test, what) => {
-          if (event.venue in aggregate) {
-            aggregate[event.venue] = aggregate[event.venue] + 1
-          } else {
-            aggregate[event.venue] = 1
-          }
-          return aggregate
-        }, {})}
-      />
+      <EventsPerVenueChart events={events} />
       <Show when={results()?.broken?.length}>
         <h3>Broken</h3>
         <For each={results()?.broken}>
