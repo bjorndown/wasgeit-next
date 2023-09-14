@@ -1,35 +1,33 @@
 import './index.css'
-import { For } from 'solid-js'
-import { createServerData$ } from 'solid-start/server'
-import { A, useRouteData } from '@solidjs/router'
+import { createResource, For } from 'solid-js'
+import { A } from '@solidjs/router'
 import { attachDevtoolsOverlay } from '@solid-devtools/overlay'
-import { JSDOM } from 'jsdom'
 
 attachDevtoolsOverlay()
 
 const DATE_PATTERN = /^wasgeit\/[0-9]{4}-[0-9]{2}-[0-9]{2}/
 
-export const routeData = () => {
-  return createServerData$(async () => {
+export default function Home() {
+  const [data] = createResource(async () => {
     const response = await fetch('https://redcoast.fra1.digitaloceanspaces.com')
     const text = await response.text()
-    const jsdom = new JSDOM(text)
-    return Array.from(new Set(Array.from(jsdom.window.document.querySelectorAll('Contents'))
-      .map((node): string => node.querySelector('Key')?.textContent ?? '')
-      .filter(key => DATE_PATTERN.test(key))
-      .map(key => key.split('/')[1])).keys())
+    const jsdom = new DOMParser().parseFromString(text, 'application/xml')
+    return Array.from(
+      new Set(
+        Array.from(jsdom.querySelectorAll('Contents'))
+          .map((node): string => node.querySelector('Key')?.textContent ?? '')
+          .filter(key => DATE_PATTERN.test(key))
+          .map(key => key.split('/')[1])
+      ).keys()
+    )
   })
-}
-
-export default function Home() {
-  const crawlerLogs = useRouteData<typeof routeData>()
 
   return (
     <main>
       <h1>Status</h1>
       <h2>Runs</h2>
       <ul>
-        <For each={crawlerLogs()}>
+        <For each={data()}>
           {item => (
             <li>
               <A href={`/runs/${item}`}>{item}</A>
