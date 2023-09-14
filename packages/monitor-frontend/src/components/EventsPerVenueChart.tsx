@@ -2,7 +2,11 @@ import * as echarts from 'echarts'
 import { Accessor, createMemo, onMount } from 'solid-js'
 import { Event } from '@wasgeit/common/src/types'
 
-export const EventsPerVenueChart = ({ events }: { events: Accessor<Event[]> }) => {
+export const EventsPerVenueChart = ({
+  events,
+}: {
+  events: Accessor<Event[]>
+}) => {
   let chartDom: HTMLElement | undefined
 
   const venueStats = createMemo(() => {
@@ -23,12 +27,10 @@ export const EventsPerVenueChart = ({ events }: { events: Accessor<Event[]> }) =
 
     const myChart = echarts.init(chartDom)
     const option: echarts.EChartsOption = {
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'shadow',
-        },
+      title: {
+        text: 'Number of events per venue',
       },
+      animation: false,
       grid: {
         left: '3%',
         right: '4%',
@@ -38,11 +40,14 @@ export const EventsPerVenueChart = ({ events }: { events: Accessor<Event[]> }) =
       xAxis: [
         {
           type: 'category',
-          data: Object.keys(venueStats()),
+          data: Object.keys(venueStats()).map(venue => venue.split(',')[0]),
           axisTick: {
             alignWithLabel: true,
           },
-          axisLabel: { rotate: 90 },
+          axisLabel: {
+            rotate: 90,
+            color: '#000',
+          },
         },
       ],
       yAxis: [
@@ -55,6 +60,11 @@ export const EventsPerVenueChart = ({ events }: { events: Accessor<Event[]> }) =
           name: 'Events',
           type: 'bar',
           barWidth: '60%',
+          stack: 'Total',
+          label: {
+            show: true,
+            position: 'top',
+          },
           data: Object.values(venueStats()),
         },
       ],
