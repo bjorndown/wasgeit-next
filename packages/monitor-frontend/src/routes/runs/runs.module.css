@@ -1,10 +1,5 @@
-ul.loglines {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-ul.loglines li {
-    padding: 1rem 0;
-    border-bottom: thin solid lightgray;
+main {
+    max-width: 1000px;
+    padding: 1em;
+    margin: 0 auto;
 }

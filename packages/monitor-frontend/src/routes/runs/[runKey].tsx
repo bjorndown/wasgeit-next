@@ -1,11 +1,12 @@
 import { useParams, useRouteData } from '@solidjs/router'
 import { createRouteData, RouteDataArgs } from 'solid-start'
-import { createResource, For, Show } from 'solid-js'
-import styles from './runs.module.css'
+import { Accessor, createResource, For, Show } from 'solid-js'
+import './runs.module.css'
 import type { StrippedSummary } from '@wasgeit/crawler/src/lib/crawler'
 import type { Event } from '@wasgeit/common/src/types'
 import { EventsPerVenueChart } from '~/components/EventsPerVenueChart'
 import { EVENTS_JSON_URL } from '@wasgeit/common/src/constants'
+import { LogfileViewer } from '~/components/LogFileViewer'
 
 export const routeData = ({ params }: RouteDataArgs) => {
   return createRouteData(async () => {
@@ -19,8 +20,9 @@ export const routeData = ({ params }: RouteDataArgs) => {
   })
 }
 
+
 export default function Runs() {
-  const crawlerLogs = useRouteData<typeof routeData>()
+  const logLines = useRouteData<typeof routeData>()
   const params = useParams()
   const [results] = createResource<StrippedSummary>(() =>
     fetch(
@@ -83,11 +85,7 @@ export default function Runs() {
         </For>
       </Show>
       <h2>Log</h2>
-      <ul class={styles.loglines}>
-        <For each={crawlerLogs()?.split('\n').reverse()}>
-          {line => <li>{line}</li>}
-        </For>
-      </ul>
+      <LogfileViewer logLines={logLines}/>
       <h2>Events</h2>
     </main>
   )
