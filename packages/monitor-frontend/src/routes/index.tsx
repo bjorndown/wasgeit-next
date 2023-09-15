@@ -12,12 +12,14 @@ export default function Home() {
     const response = await fetch('https://redcoast.fra1.digitaloceanspaces.com')
     const text = await response.text()
     const jsdom = new DOMParser().parseFromString(text, 'application/xml')
+    // TODO jfc
     return Array.from(
       new Set(
         Array.from(jsdom.querySelectorAll('Contents'))
           .map((node): string => node.querySelector('Key')?.textContent ?? '')
           .filter(key => DATE_PATTERN.test(key))
           .map(key => key.split('/')[1])
+          .reverse()
       ).keys()
     )
   })

@@ -44,7 +44,7 @@ export default function Runs() {
   return (
     <main>
       <h1>Run {params.runKey}</h1>
-      <h2>Summary</h2>
+      <h2>Events</h2>
       <EventsPerVenueChart events={events} />
       <Show when={results()?.broken?.length}>
         <h3>Broken</h3>
@@ -57,6 +57,7 @@ export default function Runs() {
           )}
         </For>
       </Show>
+      <h2>Crawlers</h2>
       <Show when={results()?.successful?.length}>
         <h3>Problems</h3>
         <For each={results()?.successful}>
@@ -70,7 +71,9 @@ export default function Runs() {
                     {ignored => (
                       <li>
                         {ignored.reason}:{' '}
-                        <pre>{JSON.stringify(ignored.event, null, 2)}</pre>
+                        <p class="json">
+                          {JSON.stringify(ignored.event, null, 2)}
+                        </p>
                       </li>
                     )}
                   </For>
@@ -90,7 +93,6 @@ export default function Runs() {
       </Show>
       <h2>Log</h2>
       <LogfileViewer logLines={logLines} />
-      <h2>Events</h2>
     </main>
   )
 }

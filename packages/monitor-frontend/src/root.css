@@ -1,4 +1,16 @@
 body {
-    font-family: Gordita, Roboto, Oxygen, Ubuntu, Cantarell,
-    'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: Gordita, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+    'Helvetica Neue', sans-serif;
+}
+
+.json {
+  font-family: monospace;
+  word-break: break-word;
+  background-color: #ddd;
+  padding: 0.5rem;
+}
+
+ul {
+  padding: 0;
+  /*list-style: none;*/
 }

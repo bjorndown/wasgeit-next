@@ -1,16 +1,8 @@
 // @refresh reload
-import { Routes } from "@solidjs/router";
-import { Suspense } from "solid-js";
-import {
-  Body,
-  FileRoutes,
-  Head,
-  Html,
-  Meta,
-  Scripts,
-  Title,
-} from "solid-start";
-import { ErrorBoundary } from "solid-start/error-boundary";
+import { Routes } from '@solidjs/router'
+import { Suspense } from 'solid-js'
+import { Body, FileRoutes, Head, Html, Meta, Scripts, Title } from 'solid-start'
+import { ErrorBoundary } from 'solid-start/error-boundary'
 import './root.css'
 
 export default function Root() {
@@ -32,5 +24,5 @@ export default function Root() {
         <Scripts />
       </Body>
     </Html>
-  );
+  )
 }
