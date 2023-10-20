@@ -22,6 +22,7 @@ import './lacapella'
 import './heiterefahne'
 import './stellwerk'
 import './sedel'
+import './ono'
 import { logger } from '../lib/logging'
 import { getCrawlers } from '../lib/crawler'
 
