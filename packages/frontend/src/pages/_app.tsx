@@ -28,6 +28,7 @@ function MyApp({ Component, pageProps }) {
           type="application/json"
           href={EVENTS_JSON_URL}
         />
+        <script defer data-domain="wasgeit.ch" src="https://plausible.io/js/script.js"></script>
         <title>wasgeit</title>
       </Head>
       <SWRConfig value={{ fetcher }}>
