@@ -1,6 +1,6 @@
 import { useParams, useRouteData } from '@solidjs/router'
 import { createRouteData, RouteDataArgs } from 'solid-start'
-import { createResource, For, Show } from 'solid-js'
+import { createResource, createSignal, For, Show } from 'solid-js'
 import './runs.module.css'
 import type { StrippedSummary } from '@wasgeit/crawler/src/lib/crawler'
 import type { Event } from '@wasgeit/common/src/types'
@@ -21,6 +21,12 @@ export const routeData = ({ params }: RouteDataArgs) => {
 
 export default function Runs() {
   const params = useParams()
+  const [loadingEventsError, setLoadingEventsError] = createSignal<
+    string | undefined
+  >()
+  const [loadingSummaryError, setLoadingSummaryError] = createSignal<
+    string | undefined
+  >()
   const logLines = useRouteData<typeof routeData>()
   const [results] = createResource<StrippedSummary>(() =>
     fetch(
@@ -28,7 +34,20 @@ export default function Runs() {
         `wasgeit/${params.runKey}/summary.json`,
         'https://redcoast.fra1.digitaloceanspaces.com'
       ).toString()
-    ).then(r => r.json())
+    )
+      .then(r => {
+        if (!r.ok) {
+          setLoadingSummaryError(
+            `Loading summary failed with status ${r.status} ${r.statusText}`
+          )
+          return { successful: [], broken: [] }
+        }
+        return r.json()
+      })
+      .catch(error => {
+        console.error(error)
+        return { successful: [], broken: [] }
+      })
   )
   const [events] = createResource<Event[]>(
     () =>
@@ -37,7 +56,20 @@ export default function Runs() {
           `wasgeit/${params.runKey}/events.json`,
           'https://redcoast.fra1.digitaloceanspaces.com'
         ).toString()
-      ).then(r => r.json()),
+      )
+        .then(r => {
+          if (!r.ok) {
+            setLoadingEventsError(
+              `Loading events failed with status ${r.status} ${r.statusText}`
+            )
+            return []
+          }
+          return r.json()
+        })
+        .catch(error => {
+          console.error(error)
+          return []
+        }),
     { initialValue: [] }
   )
 
@@ -45,7 +77,16 @@ export default function Runs() {
     <main>
       <h1>Run {params.runKey}</h1>
       <h2>Events</h2>
-      <EventsPerVenueChart events={events} />
+      <Show
+        when={!loadingEventsError()}
+        fallback={<p>Cannot show events: {loadingEventsError()}</p>}
+      >
+        <EventsPerVenueChart events={events} />
+      </Show>
+      <h2>Crawlers</h2>
+      <Show when={loadingSummaryError()}>
+        <p>Cannot show anything here: {loadingSummaryError()}</p>
+      </Show>
       <Show when={results()?.broken?.length}>
         <h3>Broken</h3>
         <For each={results()?.broken}>
@@ -57,7 +98,7 @@ export default function Runs() {
           )}
         </For>
       </Show>
-      <h2>Crawlers</h2>
+
       <Show when={results()?.successful?.length}>
         <h3>Problems</h3>
         <For each={results()?.successful}>
