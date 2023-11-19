@@ -9,10 +9,24 @@ import {
 import { LOG_FILE_PATH, logger } from './lib/logging'
 import { Event } from '@wasgeit/common/src/types'
 import winston from 'winston'
-
+import { Command } from 'commander'
 import './crawlers'
 
-logger.add(new winston.transports.File({ filename: LOG_FILE_PATH }))
+const program = new Command()
+program
+  .option(
+    '--local',
+    'do not upload any logs or other artifacts to the s3 bucket'
+  )
+  .parse()
+
+const local = program.opts().local
+
+if (local) {
+  logger.info('not uploading any artifacts')
+} else {
+  logger.add(new winston.transports.File({ filename: LOG_FILE_PATH }))
+}
 
 const getExistingEventsFor = async (
   crawlerKeys: string[]
@@ -30,7 +44,7 @@ export const main = async () => {
   let runKey
   try {
     runKey = await getRunKey()
-
+    logger.info(`starting run ${runKey}`)
     const summary = await runCrawlers(getCrawlers())
     logger.info('all venues crawled')
 
@@ -42,10 +56,12 @@ export const main = async () => {
     }
 
     if (summary.broken.length <= 0) {
-      await uploadEvents(runKey, newEvents)
-      logger.info(`${newEvents.length} new events uploaded`, {
-        totalNumberOfEvents: newEvents.length,
-      })
+      if (!local) {
+        await uploadEvents(runKey, newEvents)
+        logger.info(`${newEvents.length} new events uploaded`, {
+          totalNumberOfEvents: newEvents.length,
+        })
+      }
     } else {
       logger.info(
         `broken crawlers: ${summary.broken.map(
@@ -57,23 +73,31 @@ export const main = async () => {
         summary.broken.map(crawler => crawler.crawlerKey)
       )
 
-      await uploadEvents(
-        runKey,
-        newEvents.concat(existingEventsOfBrokenCrawlers)
-      )
-      logger.info(
-        `${newEvents.length} new and ${existingEventsOfBrokenCrawlers.length} existing events uploaded`,
-        {
-          totalNumberOfEvents: newEvents.length,
-          newEvents: newEvents.length,
-          existingEvents: existingEventsOfBrokenCrawlers.length,
-        }
-      )
+      if (!local) {
+        await uploadEvents(
+          runKey,
+          newEvents.concat(existingEventsOfBrokenCrawlers)
+        )
+        logger.info(
+          `${newEvents.length} new and ${existingEventsOfBrokenCrawlers.length} existing events uploaded`,
+          {
+            totalNumberOfEvents: newEvents.length,
+            newEvents: newEvents.length,
+            existingEvents: existingEventsOfBrokenCrawlers.length,
+          }
+        )
+      }
     }
 
-    await uploadSummary(runKey, summary)
+    if (!local) {
+      await uploadSummary(runKey, summary)
+    }
+  } catch (error: any) {
+    logger.error('main() failed', { error: error.message })
   } finally {
-    await uploadLogJson(runKey ?? new Date().toISOString())
+    if (!local) {
+      await uploadLogJson(runKey ?? new Date().toISOString())
+    }
   }
 }
 
