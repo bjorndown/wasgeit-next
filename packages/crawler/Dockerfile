@@ -7,6 +7,8 @@ WORKDIR /opt/wasgeit
 
 ADD . .
 
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+
 RUN pnpm install && cd packages/crawler && pnpm run compile && pnpm run test && pnpm run build
 
 FROM node:${IMAGE_VER} as runtime
