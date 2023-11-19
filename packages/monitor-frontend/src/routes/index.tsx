@@ -21,7 +21,7 @@ export default function Home() {
           .map(key => key.split('/')[1])
           .reverse()
       ).keys()
-    )
+    ).slice(0, 30)
   })
 
   return (
