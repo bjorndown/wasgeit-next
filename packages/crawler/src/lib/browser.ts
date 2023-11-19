@@ -1,4 +1,5 @@
 import * as puppeteer from 'puppeteer-core'
+import { logger } from './logging'
 
 export const openBrowser = async (): Promise<Browser> => {
   const browser = await startPuppeteer()
@@ -7,10 +8,12 @@ export const openBrowser = async (): Promise<Browser> => {
 
 const startPuppeteer = async (): Promise<puppeteer.Browser> => {
   if (process.env.BROWSER_WS_ENDPOINT) {
+    logger.debug('connecting to remote browser')
     return puppeteer.connect({
       browserWSEndpoint: process.env.BROWSER_WS_ENDPOINT,
     })
   }
+  logger.debug('launching local browser')
   return puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
 }
 
@@ -21,7 +24,11 @@ export type OpenPageArgs = {
 }
 
 class Browser {
-  constructor(private browser: puppeteer.Browser) {}
+  constructor(private browser: puppeteer.Browser) {
+    browser.once('disconnected', () => {
+      logger.info('browser disconnected')
+    })
+  }
 
   async openPage({
     url,
@@ -46,7 +53,17 @@ class Browser {
 }
 
 export class Page {
-  constructor(private page: puppeteer.Page) {}
+  constructor(private page: puppeteer.Page) {
+    page.on('pageerror', err => {
+      logger.error('page error', err.message)
+    })
+
+    page.on('response', res => {
+      if (!res.ok()) {
+        logger.debug(`response [${res.status()}]: "${res.url()}"`)
+      }
+    })
+  }
 
   async query(selector: string): Promise<Element[]> {
     const elements = await this.page.$$(selector)

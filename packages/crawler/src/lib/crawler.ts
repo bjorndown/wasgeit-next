@@ -194,7 +194,9 @@ export abstract class Crawler {
   onLoad() {}
 }
 
-export const runCrawlers = async (crawlers: Crawler[]) => {
+export const runCrawlers = async (
+  crawlers: Crawler[]
+): Promise<CrawlingSummary> => {
   const browser = await openBrowser()
 
   const overallResult: CrawlingSummary = { successful: [], broken: [] }
@@ -220,12 +222,21 @@ export const runCrawlers = async (crawlers: Crawler[]) => {
           })
         }
       } catch (error: any) {
-        return overallResult.broken.push({ error, crawlerKey: crawler.key })
+        logger.error('crawler failed', {
+          crawler: crawler.key,
+          error: error.message,
+        })
+        overallResult.broken.push({
+          error: error.message,
+          crawlerKey: crawler.key,
+        })
       }
     })
   )
 
+  logger.debug('about to close browser')
   await browser.close()
+  logger.debug('browser closed')
 
   return overallResult
 }
