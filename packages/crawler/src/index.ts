@@ -6,9 +6,8 @@ import {
   uploadLogJson,
   uploadSummary,
 } from './lib/transfer'
-import { LOG_FILE_PATH, logger } from './lib/logging'
+import { addLogfileTransport, LOG_FILE_PATH, logger } from './lib/logging'
 import { Event } from '@wasgeit/common/src/types'
-import winston from 'winston'
 import { Command } from 'commander'
 import './crawlers'
 
@@ -25,7 +24,7 @@ const local = program.opts().local
 if (local) {
   logger.info('not uploading any artifacts')
 } else {
-  logger.add(new winston.transports.File({ filename: LOG_FILE_PATH }))
+  addLogfileTransport(LOG_FILE_PATH)
 }
 
 const getExistingEventsFor = async (
