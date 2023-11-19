@@ -21,7 +21,7 @@ export type RawEvent = {
   start?: string
 }
 
-type CrawlResult = {
+export type CrawlResult = {
   key: string
   events: Event[]
   broken: { event: RawEvent; error: any }[]
@@ -41,7 +41,16 @@ export type StrippedSummary = {
   broken: CrawlingSummary['broken']
 }
 
-export abstract class Crawler {
+export type Crawler = {
+  readonly key: string
+  readonly title: string
+  readonly url: string
+  readonly venue: string
+  readonly city: string
+  crawl(page: Page): Promise<CrawlResult>
+}
+
+export abstract class BrowserBasedCrawler {
   abstract readonly key: string
   abstract readonly title: string
   abstract readonly url: string
@@ -243,9 +252,15 @@ export const runCrawlers = async (
 
 const crawlers: { [key: string]: Crawler } = {}
 
-export const register = (crawler: Crawler) => (crawlers[crawler.key] = crawler)
+export const register = (crawler: Crawler) => {
+  if (crawler.key in crawlers) {
+    throw new Error(`crawler with key '${crawler.key}' already registered`)
+  }
+  crawlers[crawler.key] = crawler
+}
+
 export const getCrawlers = () => Object.values(crawlers)
-export const getCrawler = (name: string) => {
+export const getCrawler = (name: string): Crawler => {
   if (!(name in crawlers)) {
     throw new Error(
       `crawler ${name} not registered, available are: ${Object.keys(

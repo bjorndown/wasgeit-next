@@ -1,9 +1,9 @@
 import { Element, Page } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
 const BASE_URL = 'https://x-tra.ch/'
 
-class XTra extends Crawler {
+class XTra extends BrowserBasedCrawler {
   key = 'xtra'
   title = 'X-TRA'
   url = new URL('/en/agenda/concerts/', BASE_URL).toString()

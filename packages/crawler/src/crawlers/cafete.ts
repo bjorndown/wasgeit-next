@@ -1,7 +1,7 @@
 import { Page, Element } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class Cafete extends Crawler {
+class Cafete extends BrowserBasedCrawler {
   key = 'cafete'
   title = 'Cafete'
   url = 'https://cafete.ch/'

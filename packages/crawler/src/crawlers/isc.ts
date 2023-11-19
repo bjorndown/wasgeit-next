@@ -1,7 +1,7 @@
 import { Page, Element } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class Isc extends Crawler {
+class Isc extends BrowserBasedCrawler {
   key = 'isc'
   title = 'ISC'
   url = 'https://www.isc-club.ch'

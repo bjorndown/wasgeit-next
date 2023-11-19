@@ -1,7 +1,7 @@
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 import { Element, Page } from '../lib/browser'
 
-class Mokka extends Crawler {
+class Mokka extends BrowserBasedCrawler {
   key = 'mokka'
   public title = 'Mokka'
   public url = 'https://mokka.ch'

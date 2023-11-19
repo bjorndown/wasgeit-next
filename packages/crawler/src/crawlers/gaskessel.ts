@@ -1,7 +1,7 @@
 import { Page, Element } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class Gaskessel extends Crawler {
+class Gaskessel extends BrowserBasedCrawler {
   key = 'gaskessel'
   BASE_URL = 'https://gaskessel.ch'
   title = 'Gaskessel'

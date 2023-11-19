@@ -1,7 +1,7 @@
 import { Page, Element } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class Docks extends Crawler {
+class Docks extends BrowserBasedCrawler {
   key = 'docks'
   title = 'Docks'
   url = 'https://www.docks.ch/programme/'

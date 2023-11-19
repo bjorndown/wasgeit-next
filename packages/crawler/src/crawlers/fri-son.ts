@@ -1,7 +1,7 @@
 import { Page, Element } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class FriSon extends Crawler {
+class FriSon extends BrowserBasedCrawler {
   key = 'fri-son'
   BASE_URL = 'https://fri-son.ch'
   title = 'Fri-Son'

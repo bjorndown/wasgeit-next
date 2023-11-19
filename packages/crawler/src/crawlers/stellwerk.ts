@@ -1,7 +1,7 @@
 import { Page, Element } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class Stellwerk extends Crawler {
+class Stellwerk extends BrowserBasedCrawler {
   key = 'stellwerk'
   BASE_URL = 'https://www.stellwerk.be'
   title = 'Stellwerk'

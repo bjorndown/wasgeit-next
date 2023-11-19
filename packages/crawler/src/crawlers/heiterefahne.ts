@@ -1,7 +1,7 @@
 import { Page, Element } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class Heiterefahne extends Crawler {
+class Heiterefahne extends BrowserBasedCrawler {
   key = 'heiterefahne'
   BASE_URL = 'https://www.dieheiterefahne.ch'
   title = 'Heitere Fahne'

@@ -1,7 +1,7 @@
 import { Element, Page } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class OldCapitol extends Crawler {
+class OldCapitol extends BrowserBasedCrawler {
   BASE_URL = 'https://oldcapitol.ch'
   key = 'oldcapitol'
   title = 'Old Capitol'

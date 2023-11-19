@@ -1,7 +1,7 @@
 import { Element, Page } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class Turnhalle extends Crawler {
+class Turnhalle extends BrowserBasedCrawler {
   key = 'turnhalle'
   title = 'Turnhalle'
   url = 'https://www.turnhalle.ch'

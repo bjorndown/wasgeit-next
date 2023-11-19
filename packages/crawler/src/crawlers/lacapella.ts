@@ -1,7 +1,7 @@
 import { Element, Page } from '../lib/browser'
-import { Crawler, RawEvent, register } from '../lib/crawler'
+import { BrowserBasedCrawler, RawEvent, register } from '../lib/crawler'
 
-class Lacapella extends Crawler {
+class Lacapella extends BrowserBasedCrawler {
   key = 'lacapella'
   BASE_URL = 'https://www.la-cappella.ch'
   title = 'La Cappella'

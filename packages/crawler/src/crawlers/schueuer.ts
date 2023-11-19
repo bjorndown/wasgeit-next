@@ -1,7 +1,7 @@
 import { Page, Element } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class Schueuer extends Crawler {
+class Schueuer extends BrowserBasedCrawler {
   key = 'schueuer'
   title = 'Schüür'
   url = 'https://www.schuur.ch/programm'

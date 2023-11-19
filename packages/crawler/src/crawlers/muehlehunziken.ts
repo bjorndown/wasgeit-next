@@ -1,7 +1,7 @@
 import { Element, Page } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class Muehlehunziken extends Crawler {
+class Muehlehunziken extends BrowserBasedCrawler {
   key = 'muehlehunziken'
   title = 'Mühle Hunziken'
   url = 'https://muehlehunziken.ch/programm'

@@ -1,7 +1,7 @@
 import { Page, Element } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class Sedel extends Crawler {
+class Sedel extends BrowserBasedCrawler {
   key = 'sedel'
   BASE_URL = 'https://sedel.ch'
   title = 'Sedel'

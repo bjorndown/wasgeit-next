@@ -1,5 +1,5 @@
 import { Page, Element } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
 // The wordpress plugin (probably https://plugins.trac.wordpress.org/browser/eventon-lite?order=name)
 // outputs dates where the month or day are not zero-padded, which is not a valid ISO 8601 date
@@ -10,7 +10,7 @@ export const fixUnpaddedMonthAndDay = (date: string): string => {
   return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${time}`
 }
 
-class Ono extends Crawler {
+class Ono extends BrowserBasedCrawler {
   key = 'ono'
   title = 'Ono'
   url = 'https://www.onobern.ch/homepage/'

@@ -1,7 +1,7 @@
 import { Element, Page } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class Roessli extends Crawler {
+class Roessli extends BrowserBasedCrawler {
   key = 'roessli'
   title = 'Rössli'
   url = 'https://www.souslepont-roessli.ch/events/'

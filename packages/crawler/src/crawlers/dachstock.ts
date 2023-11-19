@@ -1,37 +1,53 @@
-import { Page, Element } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { CrawlResult, register } from '../lib/crawler'
+import { ISODateTime, Event } from '@wasgeit/common/src/types'
 
-class Dachstock extends Crawler {
+type WordPressEvent = {
+  title: string
+  acf: {
+    start: ISODateTime
+    end: ISODateTime
+    title: string
+    text: string
+    series: false
+  }
+  meta: {
+    title: string
+  }
+  uri: string
+}
+
+class Dachstock {
   key = 'dachstock'
   BASE_URL = 'https://www.dachstock.ch'
   title = 'Dachstock'
   url = new URL('/events', this.BASE_URL).toString()
   city = 'Bern'
   dateFormat = 'dd.MM.yyyy - HH:mm'
-  waitMsBeforeCrawl = 400
 
-  prepareDate(date: string) {
-    return date.slice(4, 22)
+  get venue(): string {
+    return `${this.title}, ${this.city}`
   }
 
-  getEventElements(page: Page): Promise<Element[]> {
-    return page.query('.event-list .event-teaser-info')
-  }
-
-  getStart(element: Element): Promise<string | undefined> {
-    return element.childText('.event-teaser-top a')
-  }
-
-  async getTitle(element: Element): Promise<string | undefined> {
-    const titlePart = await element.childText('a .event-title')
-    const artists = await element.childText('a .artist-list')
-    return `${titlePart}${titlePart ? ': ' : ''}${artists}`
-  }
-
-  async getUrl(element: Element): Promise<string | undefined> {
-    const anchor = await element.query('a')
-    const href = await anchor?.getAttribute('href')
-    return new URL(href ?? '', this.BASE_URL).toString()
+  async crawl(): Promise<CrawlResult> {
+    const response = await fetch(
+      'https://api.dachstock.ch/wp-json/wp/v2/event?preset=future&per_page=25&acf_format=standard&date_filter='
+    )
+    if (response.ok) {
+      const rawEvents: WordPressEvent[] = await response.json()
+      const events: Event[] = rawEvents.map(event => {
+        return {
+          title: event.meta.title,
+          start: event.acf.start,
+          end: event.acf.end,
+          venue: this.venue,
+          url: new URL(event.uri, this.url).toString(),
+        }
+      })
+      return { key: this.key, broken: [], events, ignored: [] }
+    }
+    throw new Error(
+      `crawling dachstock failed: ${response.status} ${response.statusText}`
+    )
   }
 }
 

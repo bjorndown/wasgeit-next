@@ -1,5 +1,5 @@
 import { Event } from '@wasgeit/common/src/types'
-import { Crawler } from './crawler'
+import { BrowserBasedCrawler } from './crawler'
 import { Page, Element } from './browser'
 
 const now = new Date('2022-10-02 10:01:02')
@@ -11,7 +11,7 @@ afterAll(() => {
   jest.useRealTimers()
 })
 
-class TestCrawler extends Crawler {
+class TestCrawler extends BrowserBasedCrawler {
   key = 'test'
   city = ''
   title = 'Test'

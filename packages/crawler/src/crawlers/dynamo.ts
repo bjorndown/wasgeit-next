@@ -1,7 +1,7 @@
 import { Page, Element } from '../lib/browser'
-import { Crawler, register } from '../lib/crawler'
+import { BrowserBasedCrawler, register } from '../lib/crawler'
 
-class Dynamo extends Crawler {
+class Dynamo extends BrowserBasedCrawler {
   key = 'dynamo'
   BASE_URL = 'https://www.dynamo.ch'
   title = 'Dynamo'
