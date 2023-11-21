@@ -119,6 +119,13 @@ export class Element {
     return this.cleanText(innerText)
   }
 
+  async parentElement(): Promise<Element> {
+    const parent = await this.element.evaluateHandle(
+      element => element.parentElement as HTMLElement
+    )
+    return new Element(parent)
+  }
+
   cleanText(something: string | undefined | null): string {
     return (
       something
