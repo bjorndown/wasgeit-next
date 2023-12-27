@@ -6,7 +6,7 @@ const BASE_URL = 'https://x-tra.ch/'
 class XTra extends BrowserBasedCrawler {
   key = 'xtra'
   title = 'X-TRA'
-  url = new URL('/en/agenda/concerts/', BASE_URL).toString()
+  url = new URL('/en/program/concerts/', BASE_URL).toString()
   city = 'Zürich'
   dateFormat = 'dd.MM.yy'
 
